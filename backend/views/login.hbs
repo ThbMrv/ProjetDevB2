@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><title>Auth</title></head>
+<body>
+  <h2>Inscription</h2>
+  <input id="registerEmail" placeholder="Email"><br>
+  <input id="registerPassword" type="password" placeholder="Mot de passe"><br>
+  <button onclick="register()">Créer un compte</button>
+
+  <h2>Connexion</h2>
+  <input id="loginEmail" placeholder="Email"><br>
+  <input id="loginPassword" type="password" placeholder="Mot de passe"><br>
+  <button onclick="login()">Se connecter</button>
+
+  <p id="message"></p>
+
+  <script>
+    async function register() {
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+
+      const res = await fetch('http://localhost:3000/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      document.getElementById('message').innerText = "✅ Compte créé : " + JSON.stringify(data);
+    }
+
+    async function login() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const res = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      document.getElementById('message').innerText = data.message;
+    }
+  </script>
+</body>
+</html>
