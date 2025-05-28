@@ -3,8 +3,13 @@
 <head><title>Auth</title></head>
 <body>
   <h2>Inscription</h2>
+  <input id="registerName" placeholder="Nom"><br>
   <input id="registerEmail" placeholder="Email"><br>
   <input id="registerPassword" type="password" placeholder="Mot de passe"><br>
+  <select id="registerRole">
+    <option value="creator">Créateur</option>
+    <option value="investor">Investisseur</option>
+  </select><br>
   <button onclick="register()">Créer un compte</button>
 
   <h2>Connexion</h2>
@@ -16,13 +21,15 @@
 
   <script>
     async function register() {
+      const name = document.getElementById('registerName').value;
       const email = document.getElementById('registerEmail').value;
       const password = document.getElementById('registerPassword').value;
+      const role = document.getElementById('registerRole').value;
 
       const res = await fetch('http://localhost:3000/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password, role }),
       });
 
       const data = await res.json();

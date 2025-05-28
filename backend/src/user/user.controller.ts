@@ -7,18 +7,30 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  async register(@Body() body: { email: string; password: string }) {
-    return this.userService.createUser(body.email, body.password);
+  async register(
+    @Body() body: { 
+      email: string; 
+      password: string; 
+      name: string; 
+      role: 'creator' | 'investor';
+    }
+  ) {
+    return this.userService.createUser(
+      body.email,
+      body.password,
+      body.name,
+      body.role
+    );
   }
 
-    @Post('login')
-    async login(@Body() body: { email: string; password: string }) {
-        const user = await this.userService.findByEmail(body.email);
+  @Post('login')
+  async login(@Body() body: { email: string; password: string }) {
+    const user = await this.userService.findByEmail(body.email);
 
-        if (user && await bcrypt.compare(body.password, user.password)) {
-            return { message: 'Connexion réussie ✅' };
-        }
-
-        return { message: 'Email ou mot de passe invalide ❌' };
+    if (user && await bcrypt.compare(body.password, user.password)) {
+      return { message: 'Connexion réussie ✅' };
     }
+
+    return { message: 'Email ou mot de passe invalide ❌' };
+  }
 }

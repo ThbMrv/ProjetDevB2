@@ -15,11 +15,17 @@ export class UserService {
     return this.userRepo.findOne({ where: { email } });
   }
 
-  async createUser(email: string, password: string) {
+  async createUser(email: string, password: string, name: string, role: 'creator' | 'investor') {
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltOrRounds);
 
-    const user = this.userRepo.create({ email, password: hashedPassword });
+    const user = this.userRepo.create({
+      email,
+      password: hashedPassword,
+      name,
+      role,
+    });
+
     return this.userRepo.save(user);
-    }
+  }
 }
