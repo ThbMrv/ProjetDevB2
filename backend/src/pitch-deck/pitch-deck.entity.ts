@@ -1,0 +1,31 @@
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { User } from '../user/user.entity';
+import { Comment } from '../comment/comment.entity';
+import { Message } from '../message/message.entity';
+
+@Entity()
+export class PitchDeck {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => User, (user) => user.pitchDecks)
+  user: User;
+
+  @Column()
+  file: string;
+
+  @Column('float')
+  amount: number;
+
+  @OneToMany(() => Comment, (comment) => comment.pitchDeck)
+  comments: Comment[];
+
+  @OneToMany(() => Message, (message) => message.pitchDeck)
+  messages: Message[];
+}

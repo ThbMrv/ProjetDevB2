@@ -1,7 +1,13 @@
 import { DataSource } from 'typeorm';
 import { User } from './user/user.entity';
-import 'dotenv/config'; // ⬅️ ajoute cette ligne si elle n'y est pas
-
+import { Meeting } from './meeting/meeting.entity';
+import { PitchDeck } from './pitch-deck/pitch-deck.entity';
+import { Offer } from './offer/offer.entity';
+import { Comment } from './comment/comment.entity';
+import { Message } from './message/message.entity';
+import { Favorite } from './favorite/favorite.entity';
+import { Notification } from './notification/notification.entity';
+import 'dotenv/config';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -10,8 +16,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  synchronize: false, // ✅ migrations only
+  synchronize: false, // Utiliser uniquement avec migrations
   logging: true,
-  entities: [User],
-  migrations: ['dist/src/migrations/*.js'], // chemins après build
+  entities: [User, Meeting, PitchDeck, Offer, Comment, Message, Favorite, Notification],
+  migrations: ['dist/migrations/*.js'],
 });
