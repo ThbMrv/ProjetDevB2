@@ -8,10 +8,10 @@ export class UserController {
 
   @Post('register')
   async register(
-    @Body() body: { 
-      email: string; 
-      password: string; 
-      name: string; 
+    @Body() body: {
+      email: string;
+      password: string;
+      name: string;
       role: 'creator' | 'investor';
     }
   ) {
@@ -19,7 +19,7 @@ export class UserController {
       body.email,
       body.password,
       body.name,
-      body.role
+      body.role,
     );
   }
 
@@ -28,7 +28,15 @@ export class UserController {
     const user = await this.userService.findByEmail(body.email);
 
     if (user && await bcrypt.compare(body.password, user.password)) {
-      return { message: 'Connexion réussie ✅' };
+      return {
+        message: 'Connexion réussie ✅',
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        },
+      };
     }
 
     return { message: 'Email ou mot de passe invalide ❌' };
