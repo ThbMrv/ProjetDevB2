@@ -6,9 +6,15 @@ import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { ViewController } from './view.controller';
+
 import { UserModule } from './user/user.module';
 import { PitchDeckModule } from './pitch-deck/pitch-deck.module';
-
+import { CommentModule } from './comment/comment.module';
+import { FavoriteModule } from './favorite/favorite.module';
+import { MeetingModule } from './meeting/meeting.module';
+import { MessageModule } from './message/message.module';
+import { NotificationModule } from './notification/notification.module';
+import { OfferModule } from './offer/offer.module';
 
 @Module({
   imports: [
@@ -25,18 +31,23 @@ import { PitchDeckModule } from './pitch-deck/pitch-deck.module';
       autoLoadEntities: true,
     }),
 
-    // 👉 Sert les vues statiques si besoin (images, css, etc.)
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
 
+    // Tous les modules ici ✅
     UserModule,
     PitchDeckModule,
+    CommentModule,
+    FavoriteModule,
+    MeetingModule,
+    MessageModule,
+    NotificationModule,
+    OfferModule,
   ],
-
   controllers: [
     AppController,
-    ViewController, // 👉 Ajout du controller pour servir /login
+    ViewController,
   ],
 })
 export class AppModule {}

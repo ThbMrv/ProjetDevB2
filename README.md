@@ -6,6 +6,7 @@
 - PostgreSQL (avec une base nommée `investnet`)  
 - `npm` (ou `pnpm`, ou `yarn`)  
 - Un fichier `.env` bien configuré (voir ci-dessous)
+npm install @nestjs/swagger swagger-ui-express
 
 ---
 
