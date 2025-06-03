@@ -10,10 +10,10 @@ async function bootstrap() {
 
   app.enableCors();
 
-  // 🔐 Configuration express-session
+  // 🔐 Sessions utilisateur
   app.use(
     session({
-      secret: 'INVESTHET_SECRET_KEY', // 🔒 à sécuriser en .env
+      secret: 'INVESTHET_SECRET_KEY',
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -23,12 +23,12 @@ async function bootstrap() {
     }),
   );
 
-  // 📁 Fichiers statiques + vues
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  // 📁 Dossiers statiques
+  app.useStaticAssets(join(__dirname, '..', 'public')); // ex: /public/uploads/image.jpg
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
-  // 📘 Swagger
+  // 🌐 Swagger
   const config = new DocumentBuilder()
     .setTitle('Investhet API')
     .setDescription('Documentation auto de ton API REST NestJS')
@@ -36,7 +36,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // accessible sur /api
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }

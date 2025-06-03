@@ -23,6 +23,9 @@ export class PitchDeck {
   @Column('float')
   amount: number;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @OneToMany(() => Comment, (comment) => comment.pitchDeck)
   comments: Comment[];
 

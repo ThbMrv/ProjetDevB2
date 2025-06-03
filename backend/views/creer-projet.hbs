@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Créer un projet</title>
+  </head>
+  <body>
+    <h1>Créer un nouveau projet 💼</h1>
+
+    {{#if accessDenied}}
+      <p style="color: red;">Accès refusé. Cette page est réservée aux créateurs.</p>
+    {{else}}
+      <form action="/pitch-deck/create-with-upload" method="POST" enctype="multipart/form-data">
+        <label for="file">Nom du projet :</label><br>
+        <input type="text" id="file" name="file" required><br><br>
+
+        <label for="amount">Montant demandé :</label><br>
+        <input type="number" id="amount" name="amount" required><br><br>
+
+        <label for="image">Image du pitch deck :</label><br>
+        <input type="file" id="image" name="image" accept="image/*"><br><br>
+
+        <button type="submit">Soumettre 🚀</button>
+      </form>
+    {{/if}}
+
+    <br>
+    <a href="/accueil">⬅️ Retour à l’accueil</a>
+  </body>
+</html>

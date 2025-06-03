@@ -1,12 +1,55 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Accueil</title></head>
+  <head>
+    <title>Accueil</title>
+    <style>
+      .card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 1rem 0;
+        width: 300px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      }
+
+      .card img {
+        max-width: 100%;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+      }
+
+      .card h3 {
+        margin: 0.5rem 0;
+      }
+    </style>
+  </head>
   <body>
     <h1>Bienvenue, {{ user.name }} ! 👋</h1>
     <p>Tu es connecté avec l’email : {{ user.email }}</p>
 
+    {{#if isCreator}}
+      <form method="GET" action="/creer-projet">
+        <button type="submit">Créer un projet 🚀</button>
+      </form>
+    {{/if}}
+
     <form method="POST" action="/auth/logout">
       <button type="submit">Se déconnecter</button>
     </form>
+
+    {{#if projects.length}}
+      <h2>📂 Tous les projets</h2>
+      {{#each projects}}
+        <div class="card">
+          {{#if this.imageurl}}
+            <img src="{{this.imageurl}}" alt="Pitch image" />
+          {{/if}}
+          <h3>{{this.file}}</h3>
+          <p>Montant demandé : {{this.amount}} €</p>
+        </div>
+      {{/each}}
+    {{else}}
+      <p>Aucun projet pour le moment.</p>
+    {{/if}}
   </body>
 </html>
