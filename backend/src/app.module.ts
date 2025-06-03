@@ -6,6 +6,8 @@ import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { ViewController } from './view.controller';
+import { LoginController } from './login.controller';
+import { ProfileController } from './profile.controller'; // 👈 Ajouté ici
 
 import { UserModule } from './user/user.module';
 import { PitchDeckModule } from './pitch-deck/pitch-deck.module';
@@ -35,7 +37,7 @@ import { OfferModule } from './offer/offer.module';
       rootPath: join(__dirname, '..', 'public'),
     }),
 
-    // Tous les modules ici ✅
+    // Tous tes modules fonctionnels
     UserModule,
     PitchDeckModule,
     CommentModule,
@@ -48,6 +50,8 @@ import { OfferModule } from './offer/offer.module';
   controllers: [
     AppController,
     ViewController,
+    LoginController,
+    ProfileController, // ✅ Ajouté ici pour la route /profile
   ],
 })
 export class AppModule {}

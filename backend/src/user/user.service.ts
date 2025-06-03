@@ -28,4 +28,12 @@ export class UserService {
 
     return this.userRepo.save(user);
   }
+
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.findByEmail(email);
+    if (!user) return null;
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    return isMatch ? user : null;
+  }
 }

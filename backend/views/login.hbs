@@ -13,9 +13,11 @@
   <button onclick="register()">Créer un compte</button>
 
   <h2>Connexion</h2>
-  <input id="loginEmail" placeholder="Email"><br>
-  <input id="loginPassword" type="password" placeholder="Mot de passe"><br>
-  <button onclick="login()">Se connecter</button>
+  <form method="POST" action="/auth/login">
+    <input name="email" placeholder="Email"><br>
+    <input type="password" name="password" placeholder="Mot de passe"><br>
+    <button type="submit">Se connecter</button>
+  </form>
 
   <p id="message"></p>
 
@@ -34,20 +36,6 @@
 
       const data = await res.json();
       document.getElementById('message').innerText = "✅ Compte créé : " + JSON.stringify(data);
-    }
-
-    async function login() {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-      const res = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      document.getElementById('message').innerText = data.message;
     }
   </script>
 </body>

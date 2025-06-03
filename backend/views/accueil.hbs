@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Accueil</title></head>
+  <body>
+    <h1>Bienvenue, {{ user.name }} ! 👋</h1>
+    <p>Tu es connecté avec l’email : {{ user.email }}</p>
+
+    <form method="POST" action="/auth/logout">
+      <button type="submit">Se déconnecter</button>
+    </form>
+  </body>
+</html>
