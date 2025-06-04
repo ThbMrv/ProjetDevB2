@@ -1,4 +1,4 @@
-import { Controller, Get, Render, Req } from '@nestjs/common';
+import { Controller, Get, Render, Req, Param } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource } from 'typeorm';
 
@@ -16,20 +16,15 @@ export class ViewController {
   @Render('accueil')
   async getAccueilView(@Req() req: Request) {
     const user = req.session?.user;
+    if (!user) return { user: null };
 
-    if (!user) {
-      return { user: null };
-    }
-
-    // Récupérer TOUS les projets
     const projectsRaw = await this.dataSource.query(
       `SELECT * FROM pitch_deck ORDER BY id DESC`
     );
 
-    // ⚠️ Corriger les noms de propriété pour Handlebars
-    const projects = projectsRaw.map((p: { imageUrl: any; }) => ({
+    const projects = projectsRaw.map((p: any) => ({
       ...p,
-      imageurl: p.imageUrl, // camelCase vers lowerCase pour Handlebars
+      imageurl: p.imageUrl,
     }));
 
     return {
@@ -46,7 +41,6 @@ export class ViewController {
   @Render('creer-projet')
   getCreerProjetView(@Req() req: Request) {
     const user = req.session?.user;
-
     if (!user || user.role !== 'creator') {
       return { accessDenied: true };
     }
@@ -56,6 +50,33 @@ export class ViewController {
         name: user.name,
         email: user.email,
       },
+    };
+  }
+
+  @Get('/projets/:id')
+  @Render('projet')
+  async getOneProject(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user) return { accessDenied: true };
+
+    const [project] = await this.dataSource.query(
+      `SELECT pd.*, u.name AS "ownerName"
+       FROM pitch_deck pd
+       LEFT JOIN "user" u ON u.id = pd."userId"
+       WHERE pd.id = $1`,
+      [id],
+    );
+
+    if (!project) return { notFound: true };
+
+    return {
+      project: {
+        ...project,
+        imageurl: project.imageUrl,
+        ownerName: project.ownerName || 'Inconnu',
+      },
+      isOwner: user.id === project.userId,
+      user,
     };
   }
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Détail du projet</title>
+    <style>
+      .container {
+        max-width: 600px;
+        margin: 2rem auto;
+        border: 1px solid #ddd;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      }
+      img {
+        max-width: 100%;
+        border-radius: 8px;
+      }
+      .actions {
+        margin-top: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    {{#if notFound}}
+      <p>Projet introuvable.</p>
+    {{else if accessDenied}}
+      <p>Accès refusé.</p>
+    {{else}}
+      <div class="container">
+        <h1>{{project.file}}</h1>
+
+        {{#if project.imageurl}}
+          <img src="{{project.imageurl}}" alt="Image du projet" />
+        {{/if}}
+
+        <p><strong>Montant demandé :</strong> {{project.amount}} €</p>
+        <p><strong>Créé par :</strong> {{project.ownerName}}</p>
+
+        {{#if isOwner}}
+          <div class="actions">
+            <form method="POST" action="/pitch-deck/{{project.id}}/delete">
+              <button type="submit">🗑️ Supprimer</button>
+            </form>
+            <form method="GET" action="/pitch-deck/{{project.id}}/edit">
+              <button type="submit">✏️ Modifier</button>
+            </form>
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+
+    <p><a href="/accueil">⬅️ Retour</a></p>
+  </body>
+</html>

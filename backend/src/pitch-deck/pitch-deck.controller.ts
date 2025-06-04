@@ -1,55 +1,48 @@
 import {
   Controller,
-  Get,
   Post,
+  Get,
   Param,
-  Body,
-  Put,
-  Delete,
-  UploadedFile,
-  UseInterceptors,
   Req,
   Res,
+  Render,
+  Body,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { DataSource } from 'typeorm';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { PitchDeckService } from './pitch-deck.service';
-import { PitchDeck } from './pitch-deck.entity';
-import { Request, Response } from 'express';
-import { Express } from 'express'; // ✅ pour le type Multer.File
 
 @Controller('pitch-deck')
 export class PitchDeckController {
-  constructor(private readonly service: PitchDeckService) {}
+  constructor(private dataSource: DataSource) {}
 
-  @Get()
-  getAll(): Promise<PitchDeck[]> {
-    return this.service.findAll();
+  // 🔄 Afficher le formulaire d’édition
+  @Get('/:id/edit')
+  @Render('edit-projet')
+  async getEditForm(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user) return { accessDenied: true };
+
+    const [project] = await this.dataSource.query(
+      `SELECT * FROM pitch_deck WHERE id = $1`,
+      [id],
+    );
+
+    if (!project) return { notFound: true };
+    if (project.userId !== user.id) return { forbidden: true };
+
+    return {
+      project,
+      user,
+    };
   }
 
-  @Get(':id')
-  getOne(@Param('id') id: number): Promise<PitchDeck | null> {
-    return this.service.findOne(id);
-  }
-
-  @Post()
-  create(@Body() data: Partial<PitchDeck>): Promise<PitchDeck> {
-    return this.service.create(data);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<PitchDeck>) {
-    return this.service.update(id, data);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.service.remove(id);
-  }
-
-  // ✅ Création projet avec image uploadée
-  @Post('/create-with-upload')
+  // ✅ Enregistrer la modif
+  @Post('/:id/edit')
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -62,23 +55,54 @@ export class PitchDeckController {
       }),
     }),
   )
-  async createWithUpload(
-    @UploadedFile() file: Express.Multer.File, // ✅ Type corrigé
+  async updateProject(
+    @Param('id') id: number,
     @Req() req: Request,
-    @Body() body: any,
     @Res() res: Response,
+    @Body() body: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     const user = req.session?.user;
     if (!user) return res.status(403).send('Non autorisé');
 
-    const newPitch: Partial<PitchDeck> = {
-      user: user, // or user: { id: user.id } if PitchDeck expects a user object
-      file: body.file,
-      amount: parseFloat(body.amount),
-      imageUrl: file ? `/uploads/${file.filename}` : undefined,
-    };
+    const [project] = await this.dataSource.query(
+      `SELECT * FROM pitch_deck WHERE id = $1`,
+      [id],
+    );
 
-    await this.service.create(newPitch);
-    return res.redirect('/accueil');
+    if (!project || project.userId !== user.id) {
+      return res.status(403).send('Accès refusé');
+    }
+
+    await this.dataSource.query(
+      `UPDATE pitch_deck SET file = $1, amount = $2, "imageUrl" = $3 WHERE id = $4`,
+      [
+        body.file,
+        parseFloat(body.amount),
+        file ? `/uploads/${file.filename}` : project.imageUrl,
+        id,
+      ],
+    );
+
+    res.redirect(`/projets/${id}`);
+  }
+
+  // ❌ Supprimer
+  @Post('/:id/delete')
+  async deleteProject(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
+    const user = req.session?.user;
+    if (!user) return res.status(403).send('Non autorisé');
+
+    const [project] = await this.dataSource.query(
+      `SELECT * FROM pitch_deck WHERE id = $1`,
+      [id],
+    );
+
+    if (!project || project.userId !== user.id) {
+      return res.status(403).send('Accès refusé');
+    }
+
+    await this.dataSource.query(`DELETE FROM pitch_deck WHERE id = $1`, [id]);
+    res.redirect('/accueil');
   }
 }

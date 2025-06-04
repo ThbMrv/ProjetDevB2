@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Modifier le projet</title>
+  </head>
+  <body>
+    <h1>Modifier le projet 🛠️</h1>
+
+    {{#if forbidden}}
+      <p style="color:red">Tu n'es pas autorisé à modifier ce projet.</p>
+    {{else if notFound}}
+      <p style="color:red">Projet introuvable.</p>
+    {{else}}
+      <form method="POST" action="/pitch-deck/{{project.id}}/edit" enctype="multipart/form-data">
+        <label for="file">Nom du projet :</label><br>
+        <input type="text" id="file" name="file" value="{{project.file}}" required><br><br>
+
+        <label for="amount">Montant :</label><br>
+        <input type="number" id="amount" name="amount" value="{{project.amount}}" required><br><br>
+
+        <label for="image">Changer l'image :</label><br>
+        <input type="file" name="image" accept="image/*"><br><br>
+
+        <button type="submit">Enregistrer ✅</button>
+      </form>
+    {{/if}}
+
+    <br>
+    <a href="/projets/{{project.id}}">⬅️ Retour</a>
+  </body>
+</html>
