@@ -1,0 +1,54 @@
+import { Controller, Get, Render, Req } from '@nestjs/common';
+import { Request } from 'express';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PitchDeck } from './pitch-deck/pitchdeck.entity';
+import { Favorite } from './favorite/favorite.entity';
+
+@Controller()
+export class ViewController {
+  constructor(
+    @InjectRepository(PitchDeck)
+    private pitchdeckRepo: Repository<PitchDeck>,
+    @InjectRepository(Favorite)
+    private favoriteRepo: Repository<Favorite>,
+  ) {}
+
+  @Get('/login')
+  @Render('login')
+  getLoginView() {
+    return {};
+  }
+
+  @Get('/accueil')
+  @Render('accueil')
+  async getAccueilView(@Req() req: Request) {
+    const user = req.session?.user;
+
+    if (!user) {
+      return { user: null };
+    }
+
+    const allProjects = await this.pitchdeckRepo.find();
+    const favorites = await this.favoriteRepo.find({
+      where: { user: { id: user.id } },
+      relations: ['pitchdeck'],
+    });
+
+    const favoriteIds = favorites.map((f) => f.pitchdeck.id);
+
+    const projects = allProjects.map((p) => ({
+      ...p,
+      isFavorite: favoriteIds.includes(p.id),
+    }));
+
+    return {
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+      isCreator: user.role === 'creator',
+      projects,
+    };
+  }
+}

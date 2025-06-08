@@ -8,6 +8,7 @@ import {
 import { User } from '../user/user.entity';
 import { Comment } from '../comment/comment.entity';
 import { Message } from '../message/message.entity';
+import { Favorite } from '../favorite/favorite.entity';
 
 @Entity()
 export class PitchDeck {
@@ -31,4 +32,8 @@ export class PitchDeck {
 
   @OneToMany(() => Message, (message) => message.pitchDeck)
   messages: Message[];
+
+  @OneToMany(() => Favorite, (favorite) => favorite.pitchdeck)
+  favorites: Favorite[];
+
 }

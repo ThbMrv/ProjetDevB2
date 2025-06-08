@@ -7,7 +7,7 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { ViewController } from './view.controller';
 import { LoginController } from './login.controller';
-import { ProfileController } from './profile.controller'; // 👈 Ajouté ici
+import { ProfileController } from './profile.controller';
 
 import { UserModule } from './user/user.module';
 import { PitchDeckModule } from './pitch-deck/pitch-deck.module';
@@ -17,6 +17,13 @@ import { MeetingModule } from './meeting/meeting.module';
 import { MessageModule } from './message/message.module';
 import { NotificationModule } from './notification/notification.module';
 import { OfferModule } from './offer/offer.module';
+
+import { PitchDeck } from './pitch-deck/pitch-deck.entity';
+import { Favorite } from './favorite/favorite.entity';
+import { Offer } from './offer/offer.entity';
+import { Notification } from './notification/notification.entity';
+import { Message } from './message/message.entity';
+
 
 @Module({
   imports: [
@@ -37,7 +44,7 @@ import { OfferModule } from './offer/offer.module';
       rootPath: join(__dirname, '..', 'public'),
     }),
 
-    // Tous tes modules fonctionnels
+    // Modules
     UserModule,
     PitchDeckModule,
     CommentModule,
@@ -46,12 +53,16 @@ import { OfferModule } from './offer/offer.module';
     MessageModule,
     NotificationModule,
     OfferModule,
+
+    // Ajout de TypeOrmModule pour injecter les repositories dans ViewController
+    TypeOrmModule.forFeature([PitchDeck, Favorite, Offer, Notification, Message]),
+
   ],
   controllers: [
     AppController,
     ViewController,
     LoginController,
-    ProfileController, // ✅ Ajouté ici pour la route /profile
+    ProfileController,
   ],
 })
 export class AppModule {}

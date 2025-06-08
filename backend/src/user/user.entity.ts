@@ -43,11 +43,8 @@ export class User {
   @OneToMany(() => Message, (message) => message.receiver)
   receivedMessages: Message[];
 
-  @OneToMany(() => Favorite, (favorite) => favorite.sender)
-  sentFavorites: Favorite[];
-
-  @OneToMany(() => Favorite, (favorite) => favorite.recipient)
-  receivedFavorites: Favorite[];
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  favorites: Favorite[];
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];

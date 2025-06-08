@@ -1,33 +1,45 @@
-import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
-import { Favorite } from './favorite.entity';
+import { PitchDeck } from '../pitch-deck/pitch-deck.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Controller('favorites')
 export class FavoriteController {
-  constructor(private readonly service: FavoriteService) {}
+  constructor(
+    private readonly service: FavoriteService,
+    @InjectRepository(PitchDeck)
+    private readonly pitchdeckRepo: Repository<PitchDeck>,
+  ) {}
+
+  @Post('toggle/:pitchdeckId')
+  async toggleFavorite(
+    @Param('pitchdeckId') pitchdeckId: number,
+    @Req() req: any,
+  ) {
+    const user = req.session?.user;
+    if (!user) {
+      console.warn('⚠️ Aucune session utilisateur trouvée');
+      throw new UnauthorizedException('Utilisateur non authentifié');
+    }
+
+    const pitchdeck = await this.pitchdeckRepo.findOneByOrFail({ id: pitchdeckId });
+
+    return this.service.toggle(user, pitchdeck);
+  }
 
   @Get()
-  getAll(): Promise<Favorite[]> {
-    return this.service.findAll();
-  }
+  async getMyFavorites(@Req() req: any) {
+    const user = req.session?.user;
+    if (!user) throw new UnauthorizedException('Utilisateur non authentifié');
 
-  @Get(':id')
-  getOne(@Param('id') id: number): Promise<Favorite | null> {
-    return this.service.findOne(id);
-  }
-
-  @Post()
-  create(@Body() data: Partial<Favorite>): Promise<Favorite> {
-    return this.service.create(data);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Favorite>) {
-    return this.service.update(id, data);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.service.remove(id);
+    return this.service.findFavoritesByUser(user.id);
   }
 }

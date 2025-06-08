@@ -2,32 +2,38 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Favorite } from './favorite.entity';
+import { User } from '../user/user.entity';
+import { PitchDeck } from '../pitch-deck/pitch-deck.entity';
 
 @Injectable()
 export class FavoriteService {
   constructor(
     @InjectRepository(Favorite)
-    private repo: Repository<Favorite>,
+    private readonly repo: Repository<Favorite>,
   ) {}
 
-  findAll() {
-    return this.repo.find();
+  async toggle(user: User, pitchdeck: PitchDeck): Promise<{ favorited: boolean }> {
+    const existing = await this.repo.findOne({
+      where: {
+        user: { id: user.id },
+        pitchdeck: { id: pitchdeck.id },
+      },
+    });
+
+    if (existing) {
+      await this.repo.remove(existing);
+      return { favorited: false };
+    }
+
+    const favorite = this.repo.create({ user, pitchdeck });
+    await this.repo.save(favorite);
+    return { favorited: true };
   }
 
-  findOne(id: number) {
-    return this.repo.findOne({ where: { id } });
-  }
-
-  create(data: Partial<Favorite>) {
-    const favorite = this.repo.create(data);
-    return this.repo.save(favorite);
-  }
-
-  update(id: number, data: Partial<Favorite>) {
-    return this.repo.update(id, data);
-  }
-
-  remove(id: number) {
-    return this.repo.delete(id);
+  async findFavoritesByUser(userId: number): Promise<Favorite[]> {
+    return this.repo.find({
+      where: { user: { id: userId } },
+      relations: ['pitchdeck'],
+    });
   }
 }

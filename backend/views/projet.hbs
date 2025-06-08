@@ -18,6 +18,13 @@
       .actions {
         margin-top: 1.5rem;
       }
+      .favorite-btn {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        margin-left: 0.5rem;
+      }
     </style>
   </head>
   <body>
@@ -27,7 +34,12 @@
       <p>Accès refusé.</p>
     {{else}}
       <div class="container">
-        <h1>{{project.file}}</h1>
+        <h1>
+          {{project.file}}
+          <button id="favorite-btn" class="favorite-btn" onclick="toggleFavorite(event, {{project.id}})">
+            {{#if isFavorite}}❤️{{else}}🤍{{/if}}
+          </button>
+        </h1>
 
         {{#if project.imageurl}}
           <img src="{{project.imageurl}}" alt="Image du projet" />
@@ -35,6 +47,16 @@
 
         <p><strong>Montant demandé :</strong> {{project.amount}} €</p>
         <p><strong>Créé par :</strong> {{project.ownerName}}</p>
+
+        {{#unless isOwner}}
+          <button onclick="toggleMessageForm()">✉️ Contacter le créateur</button>
+
+          <div id="message-popup" style="display: none; margin-top: 1rem;">
+            <textarea id="message-content" placeholder="Votre message..."></textarea>
+            <button onclick="sendMessage({{project.id}})">Envoyer</button>
+            <p id="message-status"></p>
+          </div>
+        {{/unless}}
 
         {{#if isOwner}}
           <div class="actions">
@@ -45,10 +67,83 @@
               <button type="submit">✏️ Modifier</button>
             </form>
           </div>
+        {{else}}
+          {{#if (eq user.role "investor")}}
+            <div class="actions">
+              <form id="offer-form">
+                <label for="amount">Faire une offre 💰 (€)</label>
+                <input type="number" name="amount" id="offer-amount" required min="1" step="any" />
+                <button type="submit">Proposer</button>
+              </form>
+              <p id="offer-message" style="color: green;"></p>
+            </div>
+          {{/if}}
         {{/if}}
       </div>
     {{/if}}
 
     <p><a href="/accueil">⬅️ Retour</a></p>
+
+    <script>
+      async function toggleFavorite(event, pitchdeckId) {
+        event.preventDefault();
+        const res = await fetch(`/favorites/toggle/${pitchdeckId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (res.ok) {
+          const { favorited } = await res.json();
+          const btn = document.getElementById('favorite-btn');
+          if (btn) btn.textContent = favorited ? '❤️' : '🤍';
+        } else {
+          alert("Erreur lors de l'ajout/suppression du favori.");
+        }
+      }
+
+      const offerForm = document.getElementById('offer-form');
+      if (offerForm) {
+        offerForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const amount = document.getElementById('offer-amount').value;
+          const pitchdeckId = {{project.id}};
+
+          const res = await fetch(`/projets/${pitchdeckId}/offre`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: parseFloat(amount) }),
+          });
+
+          const msg = document.getElementById('offer-message');
+          if (res.ok) {
+            msg.textContent = '✅ Offre envoyée avec succès !';
+          } else {
+            msg.textContent = '❌ Une erreur est survenue.';
+          }
+        });
+      }
+
+        function toggleMessageForm() {
+          const popup = document.getElementById("message-popup");
+          popup.style.display = popup.style.display === "none" ? "block" : "none";
+        }
+
+        async function sendMessage(projectId) {
+          const content = document.getElementById("message-content").value;
+          const status = document.getElementById("message-status");
+
+          const res = await fetch(`/projets/${projectId}/message`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content }),
+          });
+
+          if (res.ok) {
+            status.textContent = "✅ Message envoyé !";
+          } else {
+            status.textContent = "❌ Erreur lors de l'envoi.";
+          }
+        }
+    </script>
   </body>
 </html>

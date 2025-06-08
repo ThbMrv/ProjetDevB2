@@ -10,24 +10,89 @@
         margin: 1rem 0;
         width: 300px;
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        position: relative;
+        transition: transform 0.2s;
       }
+
+      .card:hover {
+        transform: scale(1.02);
+      }
+
       .card img {
         max-width: 100%;
         border-radius: 8px;
         margin-bottom: 0.5rem;
       }
+
       .card h3 {
         margin: 0.5rem 0;
       }
-      a {
+
+      a.card-link {
         text-decoration: none;
         color: inherit;
+        display: inline-block;
+      }
+
+      .notif-container {
+        position: relative;
+        display: inline-block;
+        margin-left: 1rem;
+      }
+
+      .notif-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 2rem;
+        background: white;
+        border: 1px solid #ccc;
+        width: 250px;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        border-radius: 8px;
+        z-index: 1000;
+      }
+
+      .notif-dropdown.active {
+        display: block;
+      }
+
+      .notif-item {
+        padding: 0.5rem;
+        border-bottom: 1px solid #eee;
+        font-size: 0.9rem;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
     </style>
   </head>
   <body>
-    <h1>Bienvenue, {{ user.name }} ! 👋</h1>
-    <p>Tu es connecté avec l’email : {{ user.email }}</p>
+
+    <div class="navbar">
+      <div>
+        <h1>Bienvenue, {{ user.name }} ! 👋</h1>
+        <p>Tu es connecté avec l’email : {{ user.email }}</p>
+      </div>
+
+      <div class="notif-container">
+        <button onclick="toggleNotifDropdown()">🔔</button>
+        <div class="notif-dropdown" id="notifDropdown">
+          {{#if notifications.length}}
+            {{#each notifications}}
+              <div class="notif-item">{{this.message}}</div>
+            {{/each}}
+          {{else}}
+            <div class="notif-item">Aucune notification</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
 
     {{#if isCreator}}
       <form method="GET" action="/creer-projet">
@@ -42,8 +107,8 @@
     {{#if projects.length}}
       <h2>📂 Tous les projets</h2>
       {{#each projects}}
-        <a href="/projets/{{this.id}}">
-          <div class="card">
+        <a href="/projets/{{this.id}}" class="card-link">
+          <div class="card" data-id="{{this.id}}">
             {{#if this.imageurl}}
               <img src="{{this.imageurl}}" alt="Pitch image" />
             {{/if}}
@@ -55,5 +120,12 @@
     {{else}}
       <p>Aucun projet pour le moment.</p>
     {{/if}}
+
+    <script>
+      function toggleNotifDropdown() {
+        const dropdown = document.getElementById('notifDropdown');
+        dropdown.classList.toggle('active');
+      }
+    </script>
   </body>
 </html>

@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import session from 'express-session';
 import { join } from 'path';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import hbs from 'hbs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -13,7 +14,7 @@ async function bootstrap() {
   // 🔐 Sessions utilisateur
   app.use(
     session({
-      secret: 'INVESTHET_SECRET_KEY',
+      secret: 'INVESTNET_SECRET_KEY',
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -27,6 +28,8 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public')); // ex: /public/uploads/image.jpg
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
+
+  hbs.registerHelper('eq', (a: any, b: any) => a === b);
 
   // 🌐 Swagger
   const config = new DocumentBuilder()
