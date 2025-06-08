@@ -1,0 +1,156 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f5f6fa;
+  }
+  
+  /* Layout MOBILE d'abord : tout en colonne */
+  .split-auth-arcana {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100vw;
+    background: #f5f6fa;
+  }
+  
+  /* Panel commun */
+  .panel {
+    width: 100%;
+    padding: 24px 6vw 18px 6vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 340px;
+  }
+  
+  /* Connexion (haut sur mobile) */
+  .panel-login {
+    background: #f6f7fa;
+    border-radius: 32px 32px 0 0;
+    box-shadow: 0 2px 20px #b0c3c810;
+    color: #222;
+  }
+  
+  /* Inscription (bas sur mobile) */
+  .panel-signup {
+    background: #16171e;
+    color: #f3f8ff;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 -2px 20px #1b1e2117;
+    margin-top: 0;
+  }
+  
+  /* Branding */
+  .brand {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+    letter-spacing: -1.1px;
+    color: #242733;
+  }
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -1.1px;
+  }
+  
+  /* Inputs et selects */
+  input, select {
+    margin-bottom: 12px;
+    border-radius: 13px;
+    border: 1.2px solid #c5c8d6;
+    background: #fff;
+    color: #222;
+    font-size: 1.07rem;
+    padding: 12px 13px;
+    width: 100%;
+    box-shadow: 0 1px 7px #dde1ef10;
+    transition: border 0.17s, box-shadow 0.17s;
+  }
+  .panel-signup input, .panel-signup select {
+    background: #202130;
+    color: #f0f7ff;
+    border: 1.2px solid #363b48;
+  }
+  input:focus, select:focus {
+    border: 1.4px solid #7dbcf8;
+    box-shadow: 0 4px 18px #aac3e533;
+    outline: none;
+  }
+  
+  .btn.main-btn {
+    width: 100%;
+    background: #23242a;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 0;
+    margin-top: 8px;
+    margin-bottom: 13px;
+    transition: background 0.16s;
+    box-shadow: 0 1px 7px #bbc9fa11;
+    letter-spacing: 0.04em;
+  }
+  .btn.main-btn:hover, .btn.main-btn:focus {
+    background: #0e0e14;
+    color: #f7f7f7;
+  }
+  
+  .switch-link {
+    margin-top: 6px;
+    text-align: center;
+    font-size: 1.02rem;
+    color: #868997;
+  }
+  .switch-link a {
+    color: #2e6ee8;
+    text-decoration: underline;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .switch-link a:hover {
+    color: #009ae8;
+  }
+  
+  #message {
+    color: #6ec5a7;
+    font-size: 1.02rem;
+    text-align: center;
+    margin: 7px 0 0 0;
+    min-height: 18px;
+  }
+  
+  @media (min-width: 900px) {
+    .split-auth-arcana {
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f6fa;
+    }
+    .panel {
+      flex: 1;
+      min-height: 560px;
+      max-width: 440px;
+      padding: 56px 44px 42px 44px;
+    }
+    .panel-login {
+      border-radius: 36px 0 0 36px;
+      box-shadow: 10px 0 46px #dae0ff16;
+      margin-right: 0;
+    }
+    .panel-signup {
+      border-radius: 0 36px 36px 0;
+      margin-left: 0;
+      box-shadow: -8px 0 34px #24254c11;
+    }
+  }
+  

@@ -1,15 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Linkora®</title>
+  <meta charset="UTF-8" />
+  <title>Linkora® - Connecting Founders & Investors</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;400&display=swap" rel="stylesheet">
 </head>
 <body>
-  <nav>
-    <button onclick="window.location.href='/login'">Connexion</button>
-    <button onclick="window.location.href='/signup'">Inscription</button>
-  </nav>
-  <h2 class="main-title">Welcome to</h2>
-  <img src="/Metallic Bloated Package (2).png" alt="Image centrale" class="center-image" />
+  <div class="landing-bg"></div>
+  <header>
+    <nav class="main-nav">
+      <div class="main-nav-inner">
+        <a href="#" class="nav-logo">
+        <a href="/login" class="account-btn">Create Account</a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1><span class="gradient-text">Linkora®</span><br></h1>
+        <button class="mini-btn">Build your network of opportunities →</button>
+        <h1>
+          <span class="gradient-text">Connect</span><br>
+          with investors and projects<br>
+          <span class="fade-text">of tomorrow</span>
+        </h1>
+        <p class="subtitle">
+          The platform where <b>founders</b> meet their <b>investors</b>, and investors discover the next big opportunities.<br>
+          Take action, create your financial future.
+        </p>
+        <div class="cta-buttons">
+          <button class="cta-dark">I'm looking for investors</button>
+          <button class="cta-light">I want to invest</button>
+        </div>
+
+        <!-- STATS SECTION -->
+        <div class="hero-stats">
+          <div>
+            <strong>312</strong>
+            <span>projects funded</span>
+          </div>
+          <div>
+            <strong>124</strong>
+            <span>active investors</span>
+          </div>
+          <div>
+            <strong>€7.5M</strong>
+            <span>raised</span>
+          </div>
+        </div>
+
+        <!-- PARTNERS SECTION -->
+        <div class="hero-partners">
+          <span>Trusted by:</span>
+          <img src="/Image PNG.png" alt="Meta" />
+          <img src="/Image PNG 3.png" alt="Microsoft" />
+          <img src="/Image PNG 2.png" alt="Paypal" />
+        </div>
+      </div>
+      <!-- Nodes (hidden on mobile, shown on desktop only) -->
+      <div class="node node-left">AI Project<br><span>Seeking €1.2M</span></div>
+      <div class="node node-bottom-left">Healthcare<br><span>€500K</span></div>
+      <div class="node node-top-right">GreenTech<br><span>€850K</span></div>
+      <div class="node node-bottom-right">EdTech<br><span>€300K</span></div>
+    </section>
+    <footer class="footer-logos">
+      <span>🚀 Secure & Fast</span>
+      <span>🤝 Instant Networking</span>
+      <span>📱 100% Mobile</span>
+    </footer>
+  </main>
 </body>
 </html>
