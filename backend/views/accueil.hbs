@@ -86,19 +86,26 @@
         <p>Tu es connecté avec l’email : {{ user.email }}</p>
       </div>
 
-      <div class="notif-container">
-        <button onclick="toggleNotifDropdown()">🔔</button>
-        <div class="notif-dropdown" id="notifDropdown">
-          {{#if notifications.length}}
-            {{#each notifications}}
-              <div class="notif-item">{{this.message}}</div>
-            {{/each}}
-          {{else}}
-            <div class="notif-item">Aucune notification</div>
-          {{/if}}
+      <div style="display: flex; align-items: center;">
+        <!-- Bouton Mes Favoris -->
+        <a href="/mes-favoris" class="btn btn-outline-primary me-2">⭐ Mes favoris</a>
+
+        <!-- Notifications -->
+        <div class="notif-container">
+          <button onclick="toggleNotifDropdown()">🔔</button>
+          <div class="notif-dropdown" id="notifDropdown">
+            {{#if notifications.length}}
+              {{#each notifications}}
+                <div class="notif-item">{{this.message}}</div>
+              {{/each}}
+            {{else}}
+              <div class="notif-item">Aucune notification</div>
+            {{/if}}
+          </div>
         </div>
       </div>
     </div>
+
 
     {{#if isCreator}}
       <form method="GET" action="/creer-projet">
