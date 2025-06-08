@@ -1,0 +1,123 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(ellipse 62% 36% at 70% 14%, #b0c3c8bb 0%, #101014 62%, #191921 100%);
+    font-family: 'Inter', Arial, sans-serif;
+    color: #e6eaf7;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-top: 2rem;
+    color: #e9f1ff;
+  }
+  h2 {
+    font-size: 1.32rem;
+    font-weight: 700;
+    color: #b4c7d9;
+    margin-top: 2.3rem;
+    margin-bottom: 1.4rem;
+    text-align: center;
+  }
+  p {
+    text-align: center;
+    color: #b7bed7;
+    font-size: 1.08rem;
+  }
+  
+  form {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0 1.3rem 0;
+  }
+  button {
+    background: linear-gradient(90deg, #23242a 60%, #44464e 120%);
+    color: #fff;
+    border: none;
+    border-radius: 17px;
+    padding: 13px 28px;
+    font-size: 1.08rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 16px #1e223333;
+    letter-spacing: 0.01em;
+    margin: 0 0.5rem;
+    transition: background 0.15s, box-shadow 0.19s;
+  }
+  button:hover, button:focus {
+    background: #31343b;
+  }
+  
+  .card {
+    background: rgba(26, 27, 36, 0.94);
+    border: 1.5px solid #3e4258bb;
+    border-radius: 22px;
+    box-shadow: 0 7px 32px #0f162240, 0 1px 7px #b0c3c81a;
+    padding: 1.5rem 1.1rem 1.1rem 1.1rem;
+    margin: 1.1rem auto;
+    width: 96vw;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.16s, border 0.17s;
+    text-align: center;
+    color: #e7f4ff;
+    position: relative;
+  }
+  .card:hover {
+    box-shadow: 0 14px 32px #b0c3c845;
+    border: 1.5px solid #7dbcf8;
+  }
+  
+  .card img {
+    max-width: 94%;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    margin-top: 0.3rem;
+    box-shadow: 0 2px 13px #19203320;
+    object-fit: cover;
+  }
+  
+  .card h3 {
+    margin: 0.4rem 0 0.6rem 0;
+    font-size: 1.17rem;
+    font-weight: 700;
+    color: #cbe3ff;
+    letter-spacing: -0.5px;
+  }
+  .card p {
+    color: #a4b9d2;
+    font-size: 1.07rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  /* Responsive grid on desktop */
+  @media (min-width: 800px) {
+    .projects-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.4rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .card {
+      margin: 0;
+    }
+  }
+  
+  a {
+    text-decoration: none !important;
+    color: inherit;
+    transition: box-shadow 0.15s;
+    border-radius: 22px;
+    display: block;
+  }
+  a:focus, a:hover {
+    box-shadow: 0 0 0 3px #7dbcf890;
+    outline: none;
+  }
+  

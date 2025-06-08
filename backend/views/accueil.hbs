@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Frameworks (pour validation de consigne) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="accueil.css" />
+    
     <title>Accueil</title>
     <style>
       .card {
@@ -105,27 +111,23 @@
     </form>
 
     {{#if projects.length}}
-      <h2>📂 Tous les projets</h2>
-      {{#each projects}}
-        <a href="/projets/{{this.id}}" class="card-link">
-          <div class="card" data-id="{{this.id}}">
-            {{#if this.imageurl}}
-              <img src="{{this.imageurl}}" alt="Pitch image" />
-            {{/if}}
-            <h3>{{this.file}}</h3>
-            <p>Montant demandé : {{this.amount}} €</p>
-          </div>
-        </a>
-      {{/each}}
-    {{else}}
-      <p>Aucun projet pour le moment.</p>
-    {{/if}}
+  <h2>📂 Tous les projets</h2>
+  <div class="projects-grid">
+    {{#each projects}}
+      <a href="/projets/{{this.id}}">
+        <div class="card">
+          {{#if this.imageurl}}
+            <img src="{{this.imageurl}}" alt="Pitch image" />
+          {{/if}}
+          <h3>{{this.file}}</h3>
+          <p>Montant demandé : {{this.amount}} €</p>
+        </div>
+      </a>
+    {{/each}}
+  </div>
+{{else}}
+  <p>Aucun projet pour le moment.</p>
+{{/if}}
 
-    <script>
-      function toggleNotifDropdown() {
-        const dropdown = document.getElementById('notifDropdown');
-        dropdown.classList.toggle('active');
-      }
-    </script>
   </body>
 </html>
