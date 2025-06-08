@@ -41,7 +41,7 @@ export class PitchDeckController {
     };
   }
 
-  // ✅ Enregistrer la modif
+  // ✅ Enregistrer la modification
   @Post('/:id/edit')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -87,7 +87,7 @@ export class PitchDeckController {
     res.redirect(`/projets/${id}`);
   }
 
-  // ❌ Supprimer
+  // ❌ Supprimer un projet
   @Post('/:id/delete')
   async deleteProject(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
     const user = req.session?.user;
@@ -103,6 +103,41 @@ export class PitchDeckController {
     }
 
     await this.dataSource.query(`DELETE FROM pitch_deck WHERE id = $1`, [id]);
+    res.redirect('/accueil');
+  }
+
+  // 🆕 Créer un projet avec image
+  @Post('/create-with-upload')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public/uploads',
+        filename: (_req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname);
+          cb(null, `file-${uniqueSuffix}${ext}`);
+        },
+      }),
+    }),
+  )
+  async createProject(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'creator') {
+      return res.status(403).send('Non autorisé');
+    }
+
+    const imageUrl = file ? `/uploads/${file.filename}` : null;
+
+    await this.dataSource.query(
+      `INSERT INTO pitch_deck (file, amount, "imageUrl", "userId") VALUES ($1, $2, $3, $4)`,
+      [body.file, parseFloat(body.amount), imageUrl, user.id],
+    );
+
     res.redirect('/accueil');
   }
 }
