@@ -125,6 +125,22 @@
       </a>
     {{/each}}
   </div>
+  <script>
+    function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.classList.toggle('active');
+    }
+
+    // Fermer le menu si on clique ailleurs
+    window.addEventListener('click', function (e) {
+      const notifBtn = document.querySelector('.notif-container button');
+      const dropdown = document.getElementById('notifDropdown');
+      if (!notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+  </script>
+
 {{else}}
   <p>Aucun projet pour le moment.</p>
 {{/if}}
