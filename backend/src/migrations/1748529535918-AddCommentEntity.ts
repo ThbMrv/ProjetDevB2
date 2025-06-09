@@ -20,6 +20,8 @@ export class AddCommentEntity1748529535918 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "offer" ADD "pitchDeckId" integer`);
         await queryRunner.query(`ALTER TABLE "pitch_deck" ALTER COLUMN "userId" DROP NOT NULL`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "role"`);
+        // ----- AJOUT ICI : Création du type ENUM
+        await queryRunner.query(`CREATE TYPE "public"."user_role_enum" AS ENUM ('creator', 'investor')`);
         await queryRunner.query(`ALTER TABLE "user" ADD "role" "public"."user_role_enum" NOT NULL DEFAULT 'creator'`);
         await queryRunner.query(`ALTER TABLE "comment" ADD CONSTRAINT "FK_c0354a9a009d3bb45a08655ce3b" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "comment" ADD CONSTRAINT "FK_383c2de68244ebaa100b0b7b701" FOREIGN KEY ("pitchDeckId") REFERENCES "pitch_deck"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -35,6 +37,7 @@ export class AddCommentEntity1748529535918 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "comment" DROP CONSTRAINT "FK_383c2de68244ebaa100b0b7b701"`);
         await queryRunner.query(`ALTER TABLE "comment" DROP CONSTRAINT "FK_c0354a9a009d3bb45a08655ce3b"`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "role"`);
+        await queryRunner.query(`DROP TYPE "public"."user_role_enum"`); // Ajout pour rollback clean
         await queryRunner.query(`ALTER TABLE "user" ADD "role" character varying NOT NULL`);
         await queryRunner.query(`ALTER TABLE "pitch_deck" ALTER COLUMN "userId" SET NOT NULL`);
         await queryRunner.query(`ALTER TABLE "offer" DROP COLUMN "pitchDeckId"`);

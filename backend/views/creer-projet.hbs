@@ -3,27 +3,145 @@
   <head>
     <title>Créer un projet</title>
   </head>
-  <body>
-    <h1>Créer un nouveau projet 💼</h1>
+  <style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(120deg,#fff 0%,#f7f9fb 100%);
+    color: #181c2f;
+    overflow-x: hidden;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .form-container {
+    background: rgba(255,255,255,0.98);
+    border-radius: 32px;
+    box-shadow: 0 8px 40px #dde2f788, 0 1.5px 9px #e5e9f345;
+    padding: 42px 32px 38px 32px;
+    max-width: 390px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+  }
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #181c34;
+    letter-spacing: -0.5px;
+    margin-bottom: 2.2rem;
+    margin-top: 0;
+  }
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 7px;
+    margin-top: 22px;
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #23243c;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="file"] {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1.2px solid #e4e8ef;
+    border-radius: 13px;
+    background: #fafbff;
+    font-size: 1.07rem;
+    color: #212642;
+    margin-bottom: 4px;
+    outline: none;
+    margin-top: 0;
+    transition: border 0.15s;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus {
+    border: 1.5px solid #b1b7c8;
+    background: #f3f6fa;
+  }
+  input[type="file"] {
+    background: transparent;
+    padding: 8px 0 8px 0;
+    border: none;
+    margin-bottom: 12px;
+  }
+  button[type="submit"] {
+    width: 100%;
+    margin-top: 27px;
+    padding: 14px 0;
+    background: linear-gradient(90deg, #eef2fb 0%, #e2e9f8 100%);
+    color: #181c34;
+    font-size: 1.18rem;
+    font-weight: 800;
+    border: 1.5px solid #e4e8ef;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 22px #dde6fa36;
+    transition: background 0.15s, color 0.13s, transform 0.15s;
+    letter-spacing: 0.02em;
+  }
+  button[type="submit"]:hover {
+    background: #e9edf5;
+    color: #131827;
+    transform: translateY(-1px) scale(1.027);
+    border: 1.5px solid #b1b7c8;
+  }
+  .alert {
+    color: #ee3333;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 36px;
+    color: #7479a8;
+    font-size: 1.09rem;
+    text-decoration: none;
+    transition: color .13s;
+  }
+  .back-link:hover {
+    color: #181c34;
+    text-decoration: underline;
+  }
+  @media (max-width: 600px) {
+    .form-container { border-radius: 14px; padding: 22px 8px 22px 8px; }
+    h1 { font-size: 1.25rem; margin-bottom: 1.2rem;}
+    label { font-size: 1rem; margin-top: 14px;}
+    button[type="submit"] { font-size: 1rem; border-radius: 15px; }
+  }
+</style>
 
+  <body>
+  <div class="form-container">
+    <h1>Créer un nouveau projet 💼</h1>
     {{#if accessDenied}}
-      <p style="color: red;">Accès refusé. Cette page est réservée aux créateurs.</p>
+      <div class="alert">Accès refusé. Cette page est réservée aux créateurs.</div>
     {{else}}
       <form action="/pitch-deck/create-with-upload" method="POST" enctype="multipart/form-data">
-        <label for="file">Nom du projet :</label><br>
-        <input type="text" id="file" name="file" required><br><br>
+        <label for="file">Nom du projet :</label>
+        <input type="text" id="file" name="file" required>
 
-        <label for="amount">Montant demandé :</label><br>
-        <input type="number" id="amount" name="amount" required><br><br>
+        <label for="amount">Montant demandé :</label>
+        <input type="number" id="amount" name="amount" required>
 
-        <label for="image">Image du pitch deck :</label><br>
-        <input type="file" id="image" name="image" accept="image/*"><br><br>
+        <label for="image">Image du pitch deck :</label>
+        <input type="file" id="image" name="image" accept="image/*">
 
         <button type="submit">Soumettre 🚀</button>
       </form>
     {{/if}}
+    <a class="back-link" href="/accueil">⬅️ Retour à l’accueil</a>
+  </div>
+</body>
 
-    <br>
-    <a href="/accueil">⬅️ Retour à l’accueil</a>
-  </body>
 </html>
