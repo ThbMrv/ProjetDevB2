@@ -282,7 +282,65 @@
         </a>
       {{/each}}
     </div>
-  {{else}}
+  
+  {{!-- ... juste après la section projets --}}
+
+  <h2>💬 Messagerie</h2>
+
+  <div style="display: flex; gap: 2rem;">
+    <!-- Liste des conversations -->
+    <div style="width: 30%;">
+      <h3>Conversations</h3>
+      <ul>
+        {{#each conversations}}
+          <li>
+            <a href="/messages/conversation/{{this.id}}">
+              {{this.otherUserName}}
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Messages de la conversation sélectionnée -->
+    <div style="width: 70%;">
+      <h3>Conversation avec {{selectedConversationUser}}</h3>
+
+      <div id="chat-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 1rem;">
+        {{#each messages}}
+          <div>
+            <strong>{{this.senderName}}:</strong> {{this.content}}<br>
+            <small>{{this.timestamp}}</small>
+          </div>
+          <hr>
+        {{/each}}
+      </div>
+
+      <form method="POST" action="/messages/send">
+        <input type="hidden" name="recipientId" value="{{selectedConversationId}}">
+        <input type="text" name="content" placeholder="Écris un message..." required>
+        <button type="submit">Envoyer</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.classList.toggle('active');
+    }
+
+    // Fermer le menu si on clique ailleurs
+    window.addEventListener('click', function (e) {
+      const notifBtn = document.querySelector('.notif-container button');
+      const dropdown = document.getElementById('notifDropdown');
+      if (!notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+  </script>
+
+{{else}}
     <p>Aucun projet pour le moment.</p>
   {{/if}}
 

@@ -23,6 +23,7 @@ import { Favorite } from './favorite/favorite.entity';
 import { Offer } from './offer/offer.entity';
 import { Notification } from './notification/notification.entity';
 import { Message } from './message/message.entity';
+import { User } from './user/user.entity';
 
 
 @Module({
@@ -44,7 +45,6 @@ import { Message } from './message/message.entity';
       rootPath: join(__dirname, '..', 'public'),
     }),
 
-    // Modules
     UserModule,
     PitchDeckModule,
     CommentModule,
@@ -53,9 +53,9 @@ import { Message } from './message/message.entity';
     MessageModule,
     NotificationModule,
     OfferModule,
+    User,
 
-    // Ajout de TypeOrmModule pour injecter les repositories dans ViewController
-    TypeOrmModule.forFeature([PitchDeck, Favorite, Offer, Notification, Message]),
+    TypeOrmModule.forFeature([PitchDeck, Favorite, Offer, Notification, Message, User]),
 
   ],
   controllers: [

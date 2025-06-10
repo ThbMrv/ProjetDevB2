@@ -343,7 +343,12 @@ a.back-btn svg {
         <p><strong>Créé par :</strong> {{project.ownerName}}</p>
 
         {{#unless isOwner}}
-          <button onclick="toggleMessageForm()">✉️ Contacter le créateur</button>
+          <form method="POST" action="/messages/send" style="margin-top: 1rem;">
+            <input type="hidden" name="recipientId" value="{{project.ownerId}}">
+            <input type="hidden" name="pitchDeckId" value="{{project.id}}">
+            <input type="text" name="content" placeholder="Votre message..." required>
+            <button type="submit">✉️ Contacter le créateur</button>
+          </form>
 
           <div id="message-popup" style="display: none;">
             <textarea id="message-content" placeholder="Votre message..."></textarea>
