@@ -5,89 +5,247 @@
   <title>Accueil</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="accueil.css" />
-    
-    <title>Accueil</title>
-    <style>
-      .card {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 1rem;
-        margin: 1rem 0;
-        width: 300px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        position: relative;
-        transition: transform 0.2s;
-      }
+  <style>
+    :root {
+      --bg: #f8fafd;
+      --card: #fff;
+      --text: #181818;
+      --subtext: #62687c;
+      --accent: #222b45;
+      --accent-hover: #36407a;
+      --notif-bg: #fff;
+      --notif-shadow: 0 8px 32px rgba(50, 63, 101, 0.13);
+      --border: #ececec;
+      --border-dark: #dedede;
+    }
 
-      .card:hover {
-        transform: scale(1.02);
-      }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-      .card img {
-        max-width: 100%;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-      }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      padding: 1.7rem 4vw 1.2rem 4vw;
+      border-radius: 0 0 24px 24px;
+      margin-bottom: 2.5rem;
+      position: relative;
+      z-index: 5;
+      gap: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
 
-      .card h3 {
-        margin: 0.5rem 0;
-      }
+    .navbar .left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .navbar h1 {
+      font-size: 2.1rem;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--accent);
+    }
+    .navbar p {
+      margin: 0;
+      color: var(--subtext);
+      font-size: 1rem;
+      font-weight: 400;
+    }
+    .navbar .actions {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
 
-      a.card-link {
-        text-decoration: none;
-        color: inherit;
-        display: inline-block;
-      }
+    .notif-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .notif-container button {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 1.25rem;
+      border-radius: 50%;
+      padding: 0.5rem 0.7rem;
+      cursor: pointer;
+      transition: background 0.2s, border 0.2s, color 0.2s;
+      outline: none;
+    }
+    .notif-container button:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent-hover);
+    }
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 2.7rem;
+      background: var(--notif-bg);
+      border: 1px solid var(--border-dark);
+      width: 260px;
+      max-height: 320px;
+      overflow-y: auto;
+      box-shadow: var(--notif-shadow);
+      border-radius: 16px;
+      z-index: 10;
+      animation: fadeIn 0.2s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .notif-dropdown.active { display: block; }
+    .notif-item {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--notif-bg);
+    }
+    .notif-item:last-child { border-bottom: none; }
 
-      .notif-container {
-        position: relative;
-        display: inline-block;
-        margin-left: 1rem;
-      }
+    .navbar button, .navbar form button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.58rem 1.3rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0;
+      transition: background 0.17s, color 0.17s;
+      box-shadow: 0 2px 10px rgba(62, 81, 209, 0.07);
+    }
+    .navbar button:hover, .navbar form button:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
 
-      .notif-dropdown {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 2rem;
-        background: white;
-        border: 1px solid #ccc;
-        width: 250px;
-        max-height: 300px;
-        overflow-y: auto;
-        box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-        border-radius: 8px;
-        z-index: 1000;
-      }
+    .navbar form {
+      display: inline;
+      margin: 0;
+    }
 
-      .notif-dropdown.active {
-        display: block;
-      }
+    h2 {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      margin-top: 0;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
 
-      .notif-item {
-        padding: 0.5rem;
-        border-bottom: 1px solid #eee;
-        font-size: 0.9rem;
-      }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 2rem;
+      margin-top: 1.2rem;
+    }
 
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(65, 84, 242, 0.07);
+      border: 1px solid var(--border-dark);
+      padding: 1.4rem 1.2rem 1.1rem 1.2rem;
+      transition: transform 0.17s, box-shadow 0.17s;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-height: 210px;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-2px) scale(1.015);
+      box-shadow: 0 4px 22px rgba(65, 84, 242, 0.13);
+      border-color: var(--accent-hover);
+    }
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 0.9rem;
+      object-fit: cover;
+      max-height: 125px;
+      background: #ececec;
+    }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem 0;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .card p {
+      color: var(--subtext);
+      font-size: 1.02rem;
+      margin: 0.2rem 0 0 0;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.13s;
+    }
+    a:hover .card h3 {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    p {
+      font-size: 1.07rem;
+    }
+
+    @media (max-width: 700px) {
       .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.3rem;
+        padding: 1.2rem 4vw 1rem 4vw;
       }
-    </style>
-  </head>
-  <body>
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 1.05rem;
+      }
+    }
+  </style>
+  <script>
+    function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.classList.toggle('active');
+    }
+    // (Optionally: Close dropdown when clicking outside)
+    window.onclick = function(event) {
+      if (!event.target.matches('.notif-container button')) {
+        var dropdown = document.getElementById('notifDropdown');
+        if(dropdown && dropdown.classList.contains('active')) {
+          dropdown.classList.remove('active');
+        }
+      }
+    }
+  </script>
+</head>
+<body>
 
-    <div class="navbar">
-      <div>
-        <h1>Bienvenue, {{ user.name }} ! 👋</h1>
-        <p>Tu es connecté avec l’email : {{ user.email }}</p>
-      </div>
+  <div class="navbar">
+    <div class="left">
+      <h1>Bienvenue, {{ user.name }} ! 👋</h1>
+      <p>Tu es connecté avec l’email : {{ user.email }}</p>
+    </div>
 
+    <div class="actions">
       <div class="notif-container">
-        <button onclick="toggleNotifDropdown()">🔔</button>
+        <button type="button" onclick="toggleNotifDropdown()">🔔</button>
         <div class="notif-dropdown" id="notifDropdown">
           {{#if notifications.length}}
             {{#each notifications}}
@@ -98,36 +256,35 @@
           {{/if}}
         </div>
       </div>
-    </div>
-
-    {{#if isCreator}}
-      <form method="GET" action="/creer-projet">
-        <button type="submit">Créer un projet 🚀</button>
+      {{#if isCreator}}
+        <form method="GET" action="/creer-projet" style="display:inline;">
+          <button type="submit">Créer un projet 🚀</button>
+        </form>
+      {{/if}}
+      <form method="POST" action="/auth/logout" style="display:inline;">
+        <button type="submit">Se déconnecter</button>
       </form>
-    {{/if}}
-
-    <form method="POST" action="/auth/logout">
-      <button type="submit">Se déconnecter</button>
-    </form>
-
-    {{#if projects.length}}
-  <h2>📂 Tous les projets</h2>
-  <div class="projects-grid">
-    {{#each projects}}
-      <a href="/projets/{{this.id}}">
-        <div class="card">
-          {{#if this.imageurl}}
-            <img src="{{this.imageurl}}" alt="Pitch image" />
-          {{/if}}
-          <h3>{{this.file}}</h3>
-          <p>Montant demandé : {{this.amount}} €</p>
-        </div>
-      </a>
-    {{/each}}
+    </div>
   </div>
-{{else}}
-  <p>Aucun projet pour le moment.</p>
-{{/if}}
 
-  </body>
+  {{#if projects.length}}
+    <h2>📂 Tous les projets</h2>
+    <div class="projects-grid">
+      {{#each projects}}
+        <a href="/projets/{{this.id}}">
+          <div class="card">
+            {{#if this.imageurl}}
+              <img src="{{this.imageurl}}" alt="Pitch image" />
+            {{/if}}
+            <h3>{{this.file}}</h3>
+            <p>Montant demandé : {{this.amount}} €</p>
+          </div>
+        </a>
+      {{/each}}
+    </div>
+  {{else}}
+    <p>Aucun projet pour le moment.</p>
+  {{/if}}
+
+</body>
 </html>
