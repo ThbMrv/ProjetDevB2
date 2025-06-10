@@ -8,13 +8,14 @@ import {
   Render,
   Body,
   UseInterceptors,
-  UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DataSource } from 'typeorm';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { v4 as uuid } from 'uuid';
 
 @Controller('pitch-deck')
 export class PitchDeckController {
@@ -67,23 +68,35 @@ export class PitchDeckController {
 
   @Post('/:id/edit')
   @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public/uploads',
-        filename: (_req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          cb(null, `file-${uniqueSuffix}${ext}`);
+    FileFieldsInterceptor(
+      [
+        { name: 'image', maxCount: 1 },
+        { name: 'pdf', maxCount: 1 },
+      ],
+      {
+        storage: diskStorage({
+          destination: './public/uploads',
+          filename: (_req, file, cb) => {
+            const ext = extname(file.originalname);
+            cb(null, `file-${uuid()}${ext}`);
+          },
+        }),
+        fileFilter: (_req, file, cb) => {
+          if (file.fieldname === 'pdf' && file.mimetype !== 'application/pdf') {
+            return cb(new Error('Le fichier PDF est invalide'), false);
+          }
+          cb(null, true);
         },
-      }),
-    }),
+      },
+    ),
   )
   async updateProject(
     @Param('id') id: number,
     @Req() req: Request,
     @Res() res: Response,
     @Body() body: any,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles()
+    files: { image?: Express.Multer.File[]; pdf?: Express.Multer.File[] },
   ) {
     const user = req.session?.user;
     if (!user) return res.status(403).send('Non autorisé');
@@ -92,17 +105,23 @@ export class PitchDeckController {
       `SELECT * FROM pitch_deck WHERE id = $1`,
       [id],
     );
-
     if (!project || project.userId !== user.id) {
       return res.status(403).send('Accès refusé');
     }
 
+    const image = files.image?.[0];
+    const pdf = files.pdf?.[0];
+
     await this.dataSource.query(
-      `UPDATE pitch_deck SET file = $1, amount = $2, "imageUrl" = $3 WHERE id = $4`,
+      `UPDATE pitch_deck
+       SET file = $1, amount = $2, "imageUrl" = $3, description = $4, "pdfUrl" = $5
+       WHERE id = $6`,
       [
         body.file,
         parseFloat(body.amount),
-        file ? `/uploads/${file.filename}` : project.imageUrl,
+        image ? `/uploads/${image.filename}` : project.imageUrl,
+        body.description || project.description,
+        pdf ? `/uploads/${pdf.filename}` : project.pdfUrl,
         id,
       ],
     );
@@ -128,77 +147,57 @@ export class PitchDeckController {
     res.redirect('/accueil');
   }
 
-  // Création de projet avec upload
-@Post('/create-with-upload')
-@UseInterceptors(
-  FileInterceptor('image', {
-    storage: diskStorage({
-      destination: './public/uploads',
-      filename: (_req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = extname(file.originalname);
-        cb(null, `file-${uniqueSuffix}${ext}`);
-      },
-    }),
-  }),
-)
-async createProjectWithUpload(
-  @Req() req: Request,
-  @Res() res: Response,
-  @Body() body: any,
-  @UploadedFile() file: Express.Multer.File,
-) {
-  const user = req.session?.user;
-  if (!user) return res.status(403).send('Non autorisé');
-
-  // Crée le projet en BDD (adapte si besoin)
-  await this.dataSource.query(
-    `INSERT INTO pitch_deck (file, amount, "userId", "imageUrl") VALUES ($1, $2, $3, $4)`,
-    [
-      body.file,
-      parseFloat(body.amount),
-      user.id,
-      file ? `/uploads/${file.filename}` : null,
-    ],
-  );
-
-  // Tu peux rediriger vers la liste des projets, ou renvoyer un JSON de confirmation
-  res.redirect('/accueil');
-  // ou si tu veux une API :
-  // res.status(201).json({ message: 'Projet créé avec succès' });
-}
-
-
-  // 🆕 Créer un projet avec image
   @Post('/create-with-upload')
   @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public/uploads',
-        filename: (_req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          cb(null, `file-${uniqueSuffix}${ext}`);
+    FileFieldsInterceptor(
+      [
+        { name: 'image', maxCount: 1 },
+        { name: 'pdf', maxCount: 1 },
+      ],
+      {
+        storage: diskStorage({
+          destination: './public/uploads',
+          filename: (_req, file, cb) => {
+            const ext = extname(file.originalname);
+            cb(null, `file-${uuid()}${ext}`);
+          },
+        }),
+        fileFilter: (_req, file, cb) => {
+          if (file.fieldname === 'pdf' && file.mimetype !== 'application/pdf') {
+            return cb(new Error('Le fichier PDF est invalide'), false);
+          }
+          cb(null, true);
         },
-      }),
-    }),
+      },
+    ),
   )
   async createProject(
     @Req() req: Request,
     @Res() res: Response,
     @Body() body: any,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles()
+    files: { image?: Express.Multer.File[]; pdf?: Express.Multer.File[] },
   ) {
     const user = req.session?.user;
     if (!user || user.role !== 'creator') {
       return res.status(403).send('Non autorisé');
     }
 
-    const imageUrl = file ? `/uploads/${file.filename}` : null;
+    const image = files.image?.[0];
+    const pdf = files.pdf?.[0];
 
     await this.dataSource.query(
-      `INSERT INTO pitch_deck (file, amount, "imageUrl", "userId") VALUES ($1, $2, $3, $4)`,
-      [body.file, parseFloat(body.amount), imageUrl, user.id],
+      `INSERT INTO pitch_deck (file, amount, "imageUrl", "userId", description, status, "pdfUrl")
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        body.file,
+        parseFloat(body.amount),
+        image ? `/uploads/${image.filename}` : null,
+        user.id,
+        body.description || '',
+        'en cours',
+        pdf ? `/uploads/${pdf.filename}` : null,
+      ],
     );
 
     res.redirect('/accueil');

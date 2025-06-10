@@ -339,6 +339,17 @@ a.back-btn svg {
           <img src="{{project.imageurl}}" alt="Image du projet" />
         {{/if}}
 
+        {{#if project.description}}
+          <p><strong>Description :</strong> {{project.description}}</p>
+        {{/if}}
+
+        {{#if project.pdfUrl}}
+          <p>
+            <strong>Présentation PDF :</strong>
+            <a href="{{project.pdfUrl}}" target="_blank" download>Télécharger le PDF 📄</a>
+          </p>
+        {{/if}}
+
         <p><strong>Montant demandé :</strong> {{project.amount}} €</p>
         <p><strong>Créé par :</strong> {{project.ownerName}}</p>
 

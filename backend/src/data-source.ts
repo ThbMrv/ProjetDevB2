@@ -16,7 +16,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  synchronize: false, // Utiliser uniquement avec migrations
+  synchronize: false,
   logging: true,
   entities: [User, Meeting, PitchDeck, Offer, Comment, Message, Favorite, Notification],
   migrations: ['dist/migrations/*.js'],

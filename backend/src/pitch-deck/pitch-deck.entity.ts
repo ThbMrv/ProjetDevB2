@@ -36,4 +36,14 @@ export class PitchDeck {
   @OneToMany(() => Favorite, (favorite) => favorite.pitchdeck)
   favorites: Favorite[];
 
+  @Column({ type: 'text', nullable: true })
+description: string;
+
+@Column({ default: 'en cours' })
+status: string;
+
+@Column({ nullable: true })
+pdfUrl: string;
+
+
 }
