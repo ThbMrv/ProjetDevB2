@@ -16,7 +16,7 @@ import { Favorite } from './favorite/favorite.entity';
 import { Offer } from './offer/offer.entity';
 import { User } from './user/user.entity';
 import { Notification } from './notification/notification.entity';
-import { Message } from './message/message.entity'; // ✅ Ajout
+import { Message } from './message/message.entity';
 
 @Controller()
 export class ViewController {
@@ -30,7 +30,9 @@ export class ViewController {
     @InjectRepository(Notification)
     private readonly notifRepo: Repository<Notification>,
     @InjectRepository(Message)
-    private readonly messageRepo: Repository<Message>, // ✅ Injection ici
+    private readonly messageRepo: Repository<Message>,
+    @InjectRepository(User)
+  private readonly userRepo: Repository<User>,
   ) {}
 
   @Get('/login')
@@ -63,6 +65,22 @@ export class ViewController {
       take: 5,
     });
 
+    const conversations = await this.messageRepo
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('message.receiver', 'receiver')
+      .where('sender.id = :id OR receiver.id = :id', { id: user.id })
+      .getMany();
+
+    const users = [
+      ...conversations.map(m => m.sender),
+      ...conversations.map(m => m.receiver),
+    ].filter(u => u.id !== user.id);
+
+    const uniqueUsers = users.filter(
+      (u, i, arr) => arr.findIndex(x => x.id === u.id) === i
+    );
+
     return {
       user: {
         name: user.name,
@@ -72,6 +90,90 @@ export class ViewController {
       isCreator: user.role === 'creator',
       projects,
       notifications,
+      conversations: uniqueUsers.map(u => ({
+        id: u.id,
+        otherUserName: u.name,
+      })),
+      messages: [],
+      selectedConversationId: null,
+      selectedConversationUser: null,
+    };
+  }
+
+  @Get('/messages/conversation/:recipientId')
+  @Render('accueil')
+  async getConversation(
+    @Param('recipientId') recipientId: number,
+    @Req() req: Request
+  ) {
+    const user = req.session?.user;
+    if (!user) return { accessDenied: true };
+
+    const allProjects = await this.pitchdeckRepo.find();
+    const favorites = await this.favoriteRepo.find({
+      where: { user: { id: user.id } },
+      relations: ['pitchdeck'],
+    });
+
+    const favoriteIds = favorites.map(f => f.pitchdeck.id);
+    const projects = allProjects.map(p => ({
+      ...p,
+      isFavorite: favoriteIds.includes(p.id),
+    }));
+
+    const conversations = await this.messageRepo
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('message.receiver', 'receiver')
+      .where('sender.id = :id OR receiver.id = :id', { id: user.id })
+      .getMany();
+
+    const users = [
+      ...conversations.map(m => m.sender),
+      ...conversations.map(m => m.receiver),
+    ].filter(u => u.id !== user.id);
+
+    const uniqueUsers = users.filter(
+      (u, i, arr) => arr.findIndex(x => x.id === u.id) === i
+    );
+
+    // ✅ Récupération des anciens messages
+    const messages = await this.messageRepo.find({
+      where: [
+        { sender: { id: user.id }, receiver: { id: recipientId } },
+        { sender: { id: recipientId }, receiver: { id: user.id } },
+      ],
+      relations: ['sender', 'receiver'],
+      order: { timestamp: 'ASC' },
+    });
+
+    const recipient = await this.userRepo.findOneBy({ id: recipientId });
+
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      isCreator: user.role === 'creator',
+      projects,
+      notifications: await this.notifRepo.find({
+        where: { user: { id: user.id } },
+        order: { id: 'DESC' },
+        take: 5,
+      }),
+      conversations: uniqueUsers.map(u => ({
+        id: u.id,
+        otherUserName: u.name,
+      })),
+      selectedConversationId: recipientId,
+      selectedConversationUser: recipient?.name || 'Utilisateur',
+      messages: messages.map(m => ({
+        senderName: m.sender.name,
+        content: m.content,
+        timestamp: m.timestamp.toLocaleString(),
+      })),
     };
   }
 
@@ -122,6 +224,7 @@ export class ViewController {
         ...project,
         imageurl: project.imageUrl,
         ownerName: project.user?.name || 'Inconnu',
+        ownerId: project.user?.id,
       },
       isOwner: user.id === project.user.id,
       isFavorite: !!isFavorite,
@@ -185,7 +288,6 @@ export class ViewController {
       relations: ['user'],
     });
 
-    // ✅ Crée et enregistre le message
     const message = this.messageRepo.create({
       content,
       sender: { id: sender.id },
@@ -194,7 +296,6 @@ export class ViewController {
     });
     await this.messageRepo.save(message);
 
-    // ✅ Crée une notification pour le owner du projet
     const notif = this.notifRepo.create({
       user: pitch.user,
       message: `${sender.name} vous a envoyé un message privé concernant le projet "${pitch.file}"`,

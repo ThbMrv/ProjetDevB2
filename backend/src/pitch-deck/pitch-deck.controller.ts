@@ -20,7 +20,31 @@ import { extname } from 'path';
 export class PitchDeckController {
   constructor(private dataSource: DataSource) {}
 
-  // 🔄 Afficher le formulaire d’édition
+  @Get('/:id')
+  @Render('projet')
+  async getProjet(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user) return { accessDenied: true };
+
+    const [project] = await this.dataSource.query(
+      `SELECT p.*, u.name AS "ownerName", u.id AS "ownerId"
+       FROM pitch_deck p
+       JOIN "user" u ON u.id = p."userId"
+       WHERE p.id = $1`,
+      [id],
+    );
+
+    if (!project) return { notFound: true };
+
+    const isOwner = project.userId === user.id;
+
+    return {
+      project,
+      user,
+      isOwner,
+    };
+  }
+
   @Get('/:id/edit')
   @Render('edit-projet')
   async getEditForm(@Param('id') id: number, @Req() req: Request) {
@@ -41,7 +65,6 @@ export class PitchDeckController {
     };
   }
 
-  // ✅ Enregistrer la modification
   @Post('/:id/edit')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -87,7 +110,6 @@ export class PitchDeckController {
     res.redirect(`/projets/${id}`);
   }
 
-  // ❌ Supprimer un projet
   @Post('/:id/delete')
   async deleteProject(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
     const user = req.session?.user;
@@ -106,7 +128,6 @@ export class PitchDeckController {
     res.redirect('/accueil');
   }
 
-  // 🆕 Créer un projet avec image
   @Post('/create-with-upload')
   @UseInterceptors(
     FileInterceptor('image', {
