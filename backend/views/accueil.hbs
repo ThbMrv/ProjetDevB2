@@ -206,6 +206,49 @@
       font-size: 1.07rem;
     }
 
+    /* Chat popup style */
+    .chat-popup {
+      display: none;
+      position: fixed;
+      right: 32px;
+      bottom: 32px;
+      width: 440px;
+      max-width: 94vw;
+      background: var(--card);
+      border: 1.5px solid var(--border-dark);
+      border-radius: 18px;
+      box-shadow: 0 6px 32px rgba(40, 54, 150, 0.13);
+      z-index: 100;
+      animation: fadeIn 0.3s;
+    }
+
+    .chat-popup .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 18px 18px 0 0;
+      padding: 1rem 1.2rem 0.8rem 1.2rem;
+      font-size: 1.1rem;
+    }
+
+    .chat-popup .close-btn {
+      background: transparent;
+      color: #fff;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .chat-popup .chat-content {
+      padding: 1.2rem;
+      max-height: 370px;
+      overflow-y: auto;
+    }
+
     @media (max-width: 700px) {
       .navbar {
         flex-direction: column;
@@ -217,23 +260,19 @@
         grid-template-columns: 1fr;
         gap: 1.05rem;
       }
-    }
-  </style>
-  <script>
-    function toggleNotifDropdown() {
-      const dropdown = document.getElementById('notifDropdown');
-      dropdown.classList.toggle('active');
-    }
-    // (Optionally: Close dropdown when clicking outside)
-    window.onclick = function(event) {
-      if (!event.target.matches('.notif-container button')) {
-        var dropdown = document.getElementById('notifDropdown');
-        if(dropdown && dropdown.classList.contains('active')) {
-          dropdown.classList.remove('active');
-        }
+      .chat-popup {
+        right: 2vw;
+        bottom: 2vw;
+        width: 98vw;
+        max-width: 99vw;
+        padding: 0;
+      }
+      .chat-popup .chat-content {
+        padding: 0.5rem;
+        max-height: 55vw;
       }
     }
-  </script>
+  </style>
 </head>
 <body>
 
@@ -264,6 +303,8 @@
       <form method="POST" action="/auth/logout" style="display:inline;">
         <button type="submit">Se déconnecter</button>
       </form>
+      <!-- Bouton d'ouverture du chat -->
+      <button type="button" id="openChatBtn" onclick="toggleChatPopup()">💬 Messagerie</button>
     </div>
   </div>
 
@@ -282,67 +323,102 @@
         </a>
       {{/each}}
     </div>
-  
-  {{!-- ... juste après la section projets --}}
+  {{else}}
+    <p>Aucun projet pour le moment.</p>
+  {{/if}}
 
-  <h2>💬 Messagerie</h2>
-
-  <div style="display: flex; gap: 2rem;">
-    <!-- Liste des conversations -->
-    <div style="width: 30%;">
-      <h3>Conversations</h3>
-      <ul>
-        {{#each conversations}}
-          <li>
-            <a href="/messages/conversation/{{this.id}}">
-              {{this.otherUserName}}
-            </a>
-          </li>
-        {{/each}}
-      </ul>
+  <!-- POPUP CHATBOX -->
+  <div id="chatPopup" class="chat-popup">
+    <div class="chat-header">
+      <span>Messagerie</span>
+      <button onclick="toggleChatPopup()" class="close-btn">&times;</button>
     </div>
+    <div class="chat-content">
+      <div style="display: flex; gap: 1.2rem;">
+        <!-- Liste des conversations -->
+        <div style="width: 38%;">
+          <h3>Conversations</h3>
+          <ul>
+            {{#each conversations}}
+              <li>
+                <a href="/messages/conversation/{{this.id}}">
+                  {{this.otherUserName}}
+                </a>
+              </li>
+            {{/each}}
+          </ul>
+        </div>
 
-    <!-- Messages de la conversation sélectionnée -->
-    <div style="width: 70%;">
-      <h3>Conversation avec {{selectedConversationUser}}</h3>
-
-      <div id="chat-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 1rem;">
-        {{#each messages}}
-          <div>
-            <strong>{{this.senderName}}:</strong> {{this.content}}<br>
-            <small>{{this.timestamp}}</small>
+        <!-- Messages de la conversation sélectionnée -->
+        <div style="width: 62%;">
+          <h3 style="margin-bottom:0.6rem;">Conversation avec {{selectedConversationUser}}</h3>
+          <div id="chat-container" style="max-height: 210px; overflow-y: auto; border: 1px solid #ccc; padding: 0.6rem; background: #f8fafd;">
+            {{#each messages}}
+              <div>
+                <strong>{{this.senderName}}:</strong> {{this.content}}<br>
+                <small>{{this.timestamp}}</small>
+              </div>
+              <hr>
+            {{/each}}
           </div>
-          <hr>
-        {{/each}}
+          <form method="POST" action="/messages/send" style="display:flex;gap:6px;margin-top:8px;">
+            <input type="hidden" name="recipientId" value="{{selectedConversationId}}">
+            <input type="text" name="content" placeholder="Écris un message..." required style="flex:1;">
+            <button type="submit">Envoyer</button>
+          </form>
+        </div>
       </div>
-
-      <form method="POST" action="/messages/send">
-        <input type="hidden" name="recipientId" value="{{selectedConversationId}}">
-        <input type="text" name="content" placeholder="Écris un message..." required>
-        <button type="submit">Envoyer</button>
-      </form>
     </div>
   </div>
 
   <script>
-    function toggleNotifDropdown() {
-      const dropdown = document.getElementById('notifDropdown');
-      dropdown.classList.toggle('active');
+// Notification Dropdown
+function toggleNotifDropdown() {
+  const dropdown = document.getElementById('notifDropdown');
+  dropdown.classList.toggle('active');
+}
+window.addEventListener('click', function (e) {
+  const notifBtn = document.querySelector('.notif-container button');
+  const dropdown = document.getElementById('notifDropdown');
+  if (dropdown && !notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('active');
+  }
+});
+
+// Chat Popup
+function toggleChatPopup() {
+  const chat = document.getElementById('chatPopup');
+  if (chat.style.display === "block") {
+    chat.style.display = "none";
+  } else {
+    chat.style.display = "block";
+  }
+}
+
+// Fermer la popup si on clique ailleurs (sauf sur le bouton ou dans la popup)
+window.addEventListener('click', function(e) {
+  const chat = document.getElementById('chatPopup');
+  const openBtn = document.getElementById('openChatBtn');
+  // Ne rien faire si le popup n'est pas affiché ou si on clique sur le bouton d'ouverture
+  if (!chat || chat.style.display !== "block" || e.target === openBtn) return;
+  // Ne rien faire si le clic est dans la popup (y compris dans le formulaire !)
+  if (chat.contains(e.target)) return;
+  // Sinon, fermer la popup
+  chat.style.display = "none";
+});
+
+// Fermer la popup si on appuie sur la touche Échap
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const chat = document.getElementById('chatPopup');
+    if (chat && chat.style.display === "block") {
+      chat.style.display = "none";
     }
+  }
+});
 
-    // Fermer le menu si on clique ailleurs
-    window.addEventListener('click', function (e) {
-      const notifBtn = document.querySelector('.notif-container button');
-      const dropdown = document.getElementById('notifDropdown');
-      if (!notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove('active');
-      }
-    });
+
   </script>
-
-{{else}}
-    <p>Aucun projet pour le moment.</p>
-  {{/if}}
-
+  
 </body>
 </html>
