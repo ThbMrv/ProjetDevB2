@@ -128,6 +128,48 @@ export class PitchDeckController {
     res.redirect('/accueil');
   }
 
+  // Création de projet avec upload
+@Post('/create-with-upload')
+@UseInterceptors(
+  FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './public/uploads',
+      filename: (_req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        cb(null, `file-${uniqueSuffix}${ext}`);
+      },
+    }),
+  }),
+)
+async createProjectWithUpload(
+  @Req() req: Request,
+  @Res() res: Response,
+  @Body() body: any,
+  @UploadedFile() file: Express.Multer.File,
+) {
+  const user = req.session?.user;
+  if (!user) return res.status(403).send('Non autorisé');
+
+  // Crée le projet en BDD (adapte si besoin)
+  await this.dataSource.query(
+    `INSERT INTO pitch_deck (file, amount, "userId", "imageUrl") VALUES ($1, $2, $3, $4)`,
+    [
+      body.file,
+      parseFloat(body.amount),
+      user.id,
+      file ? `/uploads/${file.filename}` : null,
+    ],
+  );
+
+  // Tu peux rediriger vers la liste des projets, ou renvoyer un JSON de confirmation
+  res.redirect('/accueil');
+  // ou si tu veux une API :
+  // res.status(201).json({ message: 'Projet créé avec succès' });
+}
+
+
+  // 🆕 Créer un projet avec image
   @Post('/create-with-upload')
   @UseInterceptors(
     FileInterceptor('image', {
