@@ -54,4 +54,5 @@ export class PitchDeck {
 
   @Column({ nullable: true })
   acceptedOfferId: number;
+  meetings: any;
 }
