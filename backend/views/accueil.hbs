@@ -117,6 +117,10 @@
           {{/if}}
         </div>
       </div>
+      {{#if (eq user.role "admin")}}
+  <a href="/admin"><button>Panneau Admin</button></a>
+{{/if}}
+
 
       <form method="GET" action="/creer-projet">
         <button type="submit">Créer un projet 🚀</button>
@@ -125,7 +129,7 @@
         <button type="submit">Se déconnecter</button>
       </form>
       <form method="GET" action="/mes-favoris">
-        <button type="submit">Favoris</button>
+        <button type="submit">Favoris</button
       </form>
       <a href="/messages">
         <button type="button">💬 Messagerie</button>

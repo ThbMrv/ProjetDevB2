@@ -7,6 +7,7 @@ import {
   Req,
   Param,
   UnauthorizedException,
+  Redirect,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -267,6 +268,33 @@ export class ViewController {
     };
   }
 
+  @Get('/admin')
+@Render('admin')
+async getAdminView(@Req() req: Request) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') {
+    return { accessDenied: true };
+  }
+
+  const users = await this.userRepo.find();
+  const projects = await this.pitchdeckRepo.find();
+
+  return {
+    user,
+    users,
+    projects,
+  };
+}
+
+@Post('/admin/users/:id/delete')
+@Redirect('/admin')
+async deleteUser(@Param('id') id: number, @Req() req: Request) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') throw new UnauthorizedException();
+  await this.userRepo.delete(id);
+}
+
+
   @Get('/mes-favoris')
   @Render('favoris')
   async getMesFavoris(@Req() req: Request) {
@@ -296,4 +324,28 @@ export class ViewController {
       notifications,
     };
   }
+
+@Post('/admin/projects/:id/delete')
+@Redirect('/admin')
+async deleteProject(@Param('id') id: number, @Req() req: Request) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') throw new UnauthorizedException();
+  await this.pitchdeckRepo.delete(id);
 }
+
+@Post('/admin/projects/:id/edit')
+@Redirect('/admin')
+async editProject(
+  @Param('id') id: number,
+  @Body('file') file: string,
+  @Body('status') status: string,
+  @Req() req: Request
+) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') throw new UnauthorizedException();
+  await this.pitchdeckRepo.update(id, { file, status });
+}
+
+}
+
+

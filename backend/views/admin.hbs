@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panneau d'administration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6fb;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #222b45;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      margin-top: 2rem;
+      color: #36407a;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    form {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    input[type="text"], select {
+      padding: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #36407a;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #222b45;
+    }
+
+    .back-button {
+      margin-top: 2rem;
+      display: inline-block;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      background-color: #ccc;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .back-button:hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Panneau d'administration</h1>
+
+  <h2>Utilisateurs</h2>
+  <ul>
+    {{#each users}}
+      <li>
+        <span>{{this.name}} ({{this.email}})</span>
+        <form method="POST" action="/admin/users/{{this.id}}/delete">
+          <button type="submit">🗑 Supprimer</button>
+        </form>
+      </li>
+    {{/each}}
+  </ul>
+
+  <h2>Projets</h2>
+  <ul>
+    {{#each projects}}
+      <li>
+        <form method="POST" action="/admin/projects/{{this.id}}/edit">
+          <input type="text" name="file" value="{{this.file}}" required>
+          <select name="status">
+            <option value="en cours" {{#if (eq this.status "en cours")}}selected{{/if}}>En cours</option>
+            <option value="accepté" {{#if (eq this.status "accepté")}}selected{{/if}}>Accepté</option>
+            <option value="refusé" {{#if (eq this.status "refusé")}}selected{{/if}}>Refusé</option>
+          </select>
+          <button type="submit">💾 Modifier</button>
+        </form>
+        <form method="POST" action="/admin/projects/{{this.id}}/delete">
+          <button type="submit">🗑 Supprimer</button>
+        </form>
+      </li>
+    {{/each}}
+  </ul>
+
+  <a href="/accueil" class="back-button">⬅ Retour</a>
+
+</body>
+</html>

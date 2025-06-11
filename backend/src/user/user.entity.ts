@@ -27,9 +27,9 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: ['creator', 'investor'],
+    enum: ['creator', 'investor', 'admin'],
   })
-  role: 'creator' | 'investor';
+  role: 'creator' | 'investor' | 'admin';
 
   @OneToMany(() => PitchDeck, (pitchDeck) => pitchDeck.user)
   pitchDecks: PitchDeck[];

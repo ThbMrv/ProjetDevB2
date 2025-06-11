@@ -4,6 +4,8 @@ import {
   Body,
   Req,
   Res,
+  Param,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
@@ -14,6 +16,7 @@ import { User } from './user.entity';
 
 @Controller('auth')
 export class UserController {
+  pitchdeckRepo: any;
   constructor(
     private readonly userService: UserService,
     @InjectRepository(User)
@@ -79,4 +82,35 @@ export class UserController {
 
     return res.redirect('/profil');
   }
+
+  @Post('/admin/users/:id/delete')
+async deleteUser(@Param('id') id: number, @Req() req: Request) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') throw new UnauthorizedException();
+  await this.userRepo.delete(id);
+  return { success: true };
+}
+
+@Post('/admin/projects/:id/delete')
+async deleteProject(@Param('id') id: number, @Req() req: Request) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') throw new UnauthorizedException();
+  await this.pitchdeckRepo.delete(id);
+  return { success: true };
+}
+
+@Post('/admin/projects/:id/edit')
+async editProject(
+  @Param('id') id: number,
+  @Body('file') file: string,
+  @Body('status') status: string,
+  @Req() req: Request
+) {
+  const user = req.session?.user;
+  if (!user || user.role !== 'admin') throw new UnauthorizedException();
+
+  await this.pitchdeckRepo.update(id, { file, status });
+  return { success: true };
+}
+
 }

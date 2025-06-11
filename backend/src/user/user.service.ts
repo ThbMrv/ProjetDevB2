@@ -11,9 +11,16 @@ export class UserService {
     private userRepo: Repository<User>,
   ) {}
 
-  async findByEmail(email: string) {
-    return this.userRepo.findOne({ where: { email } });
+  async findByEmail(email: string): Promise<User | undefined> {
+    const cleanEmail = email.trim().toLowerCase();
+    console.log('[Recherche par email] →', cleanEmail);
+    const user = await this.userRepo.findOne({ where: { email: cleanEmail } });
+    return user ?? undefined;
   }
+  
+  
+
+
 
   async createUser(email: string, password: string, name: string, role: 'creator' | 'investor') {
     const saltOrRounds = 10;
@@ -36,4 +43,7 @@ export class UserService {
     const isMatch = await bcrypt.compare(password, user.password);
     return isMatch ? user : null;
   }
+
+  // Removed duplicate implementation of findByEmail
+  
 }
