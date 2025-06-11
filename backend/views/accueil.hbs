@@ -81,6 +81,36 @@
       margin-top: 1rem;
       font-weight: bold;
     }
+
+    .status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.en {
+  background-color: #f1c40f;
+  color: #fff;
+}
+
+.status-badge["en cours"] {
+  background-color: #f1c40f;
+  color: #fff;
+}
+
+.status-badge.accepté {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.status-badge.refusé {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
   </style>
 </head>
 <body>
@@ -149,7 +179,14 @@
 
             <h3>{{this.file}}</h3>
             <p>Montant demandé : <strong>{{this.amount}} €</strong></p>
-            <div class="card-footer">Voir le projet ➡️</div>
+<p>Statut :
+  <span class="status-badge {{this.status}}">
+    {{this.status}}
+  </span>
+</p>
+
+<div class="card-footer">Voir le projet ➡️</div>
+
           </div>
         </a>
       {{/each}}

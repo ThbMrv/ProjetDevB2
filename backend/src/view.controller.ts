@@ -43,87 +43,89 @@ export class ViewController {
   }
 
   @Get('/accueil')
-  @Render('accueil')
-  async getAccueilView(@Req() req: Request) {
-    const user = req.session?.user;
-    if (!user) return { user: null };
+@Render('accueil')
+async getAccueilView(@Req() req: Request) {
+  const user = req.session?.user;
+  if (!user) return { user: null };
 
-    const allProjects = await this.pitchdeckRepo.find();
-    const favorites = await this.favoriteRepo.find({
-      where: { user: { id: user.id } },
-      relations: ['pitchdeck'],
-    });
+  const allProjects = await this.pitchdeckRepo.find();
+  const favorites = await this.favoriteRepo.find({
+    where: { user: { id: user.id } },
+    relations: ['pitchdeck'],
+  });
 
-    const favoriteIds = favorites.map(f => f.pitchdeck.id);
-    const projects = allProjects.map(p => ({
-      ...p,
-      isFavorite: favoriteIds.includes(p.id),
-      imageurl: p.imageUrl,
-    }));
+  const favoriteIds = favorites.map(f => f.pitchdeck.id);
 
-    const rawNotifs = await this.notifRepo.find({
-      where: { user: { id: user.id } },
-      order: { id: 'DESC' },
-      take: 5,
-    });
+  const projects = allProjects.map(p => ({
+    ...p,
+    isFavorite: favoriteIds.includes(p.id),
+    imageurl: p.imageUrl,
+    status: p.status, // 👈 nouveau champ ajouté pour affichage
+  }));
 
-    await this.notifRepo.delete({ user: { id: user.id } });
+  const rawNotifs = await this.notifRepo.find({
+    where: { user: { id: user.id } },
+    order: { id: 'DESC' },
+    take: 5,
+  });
 
-    const offers = await this.offerRepo.find({
-      relations: ['user', 'pitchDeck'],
-    });
+  await this.notifRepo.delete({ user: { id: user.id } });
 
-    const notifications = rawNotifs.map((notif) => {
-      const related = offers.find(
-        (o) =>
-          notif.message.includes(o.user.name) &&
-          notif.message.includes(`${o.amount}`) &&
-          notif.message.includes(o.pitchDeck.file)
-      );
+  const offers = await this.offerRepo.find({
+    relations: ['user', 'pitchDeck'],
+  });
 
-      return {
-        ...notif,
-        type: related ? 'offer' : 'other',
-        offerId: related?.id,
-        offerStatus: related?.pitchDeck.status ?? 'en cours',
-      };
-    });
-
-    const conversations = await this.messageRepo
-      .createQueryBuilder('message')
-      .leftJoinAndSelect('message.sender', 'sender')
-      .leftJoinAndSelect('message.receiver', 'receiver')
-      .where('sender.id = :id OR receiver.id = :id', { id: user.id })
-      .getMany();
-
-    const users = [
-      ...conversations.map(m => m.sender),
-      ...conversations.map(m => m.receiver),
-    ].filter(u => u.id !== user.id);
-
-    const uniqueUsers = users.filter(
-      (u, i, arr) => arr.findIndex(x => x.id === u.id) === i
+  const notifications = rawNotifs.map((notif) => {
+    const related = offers.find(
+      (o) =>
+        notif.message.includes(o.user.name) &&
+        notif.message.includes(`${o.amount}`) &&
+        notif.message.includes(o.pitchDeck.file)
     );
 
     return {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-      isCreator: user.role === 'creator',
-      projects,
-      notifications,
-      conversations: uniqueUsers.map(u => ({
-        id: u.id,
-        otherUserName: u.name,
-      })),
-      messages: [],
-      selectedConversationId: null,
-      selectedConversationUser: null,
+      ...notif,
+      type: related ? 'offer' : 'other',
+      offerId: related?.id,
+      offerStatus: related?.pitchDeck.status ?? 'en cours',
     };
-  }
+  });
+
+  const conversations = await this.messageRepo
+    .createQueryBuilder('message')
+    .leftJoinAndSelect('message.sender', 'sender')
+    .leftJoinAndSelect('message.receiver', 'receiver')
+    .where('sender.id = :id OR receiver.id = :id', { id: user.id })
+    .getMany();
+
+  const users = [
+    ...conversations.map(m => m.sender),
+    ...conversations.map(m => m.receiver),
+  ].filter(u => u.id !== user.id);
+
+  const uniqueUsers = users.filter(
+    (u, i, arr) => arr.findIndex(x => x.id === u.id) === i
+  );
+
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+    isCreator: user.role === 'creator',
+    projects,
+    notifications,
+    conversations: uniqueUsers.map(u => ({
+      id: u.id,
+      otherUserName: u.name,
+    })),
+    messages: [],
+    selectedConversationId: null,
+    selectedConversationUser: null,
+  };
+}
 
   @Get('/creer-projet')
   @Render('creer-projet')
