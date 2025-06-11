@@ -32,20 +32,19 @@ body, html {
 .main-nav-inner {
   max-width: 860px;
   margin: 22px auto 0 auto;
-  background: transparent;    /* <-- Transparent */
+  background: transparent;
   border-radius: 20px;
-  box-shadow: none;           /* <-- Retire l’ombre */
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
   min-height: 54px;
   position: relative;
-  backdrop-filter: none;      /* <-- Retire le flou */
-  border: none;               /* <-- Retire la bordure */
+  backdrop-filter: none;
+  border: none;
   overflow-x: auto;
 }
-
 .nav-logo {
   display: flex;
   align-items: center;
@@ -61,39 +60,6 @@ body, html {
 .nav-logo svg {
   width: 26px;
   height: 26px;
-}
-
-/* Menu horizontal, jamais wrap */
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 4px;
-  flex: 1 1 0;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.nav-links li {
-  display: inline-block;
-}
-.nav-links li a {
-  color: #fff;
-  font-size: 1.09rem;
-  font-weight: 600;
-  text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 15px;
-  transition: background 0.16s, color 0.16s;
-  background: none;
-  line-height: 1.1;
-}
-.nav-links li a:hover, .nav-links li a:focus {
-  background: #27292d;
-  color: #ffffff;
-  text-shadow: 0 1px 6px #25c8fc24;
 }
 .account-btn {
   background: linear-gradient(90deg, #232325 60%, #5e6264 120%);
@@ -136,15 +102,6 @@ body, html {
     width: 18px;
     height: 18px;
   }
-  .nav-links {
-    gap: 2px;
-    margin-right: 4px;
-  }
-  .nav-links li a {
-    font-size: 0.98rem;
-    padding: 5px 7px;
-    border-radius: 10px;
-  }
   .account-btn {
     font-size: 0.96rem;
     padding: 6px 10px;
@@ -178,7 +135,6 @@ body, html {
     padding-right: 2vw;
   }
 }
-
 .hero-content {
   text-align: center;
   max-width: 620px;
@@ -212,7 +168,6 @@ h1 {
   font-weight: 400;
 }
 
-/* Boutons du hero centrés & adaptatifs */
 .cta-buttons {
   display: flex;
   flex-direction: column;
@@ -279,7 +234,6 @@ h1 {
   background: #383a41;
 }
 
-/* HERO-STATS & PARTNERS LISIBLES */
 .hero-stats {
   display: flex;
   flex-direction: column;
@@ -311,7 +265,6 @@ h1 {
   color: #d0e0ee;
   font-weight: 500;
 }
-
 .hero-partners {
   display: flex;
   justify-content: center;
@@ -405,8 +358,6 @@ h1 {
   height: 24px;
   opacity: 0.74;
 }
-
-/* Responsive Tablet & Desktop */
 @media (min-width: 600px) {
   .hero-content h1 { font-size: 2.3rem; }
   .cta-buttons { flex-direction: row; gap: 20px; }
@@ -416,3 +367,16 @@ h1 {
   .hero-content h1 { font-size: 3rem; }
   .footer-logos { gap: 44px; }
 }
+
+/* ===== Fade-in Animation pour effet d'apparition progressive ===== */
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(30px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+.fadein    { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 0.08s forwards;}
+.fadein-1  { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 0.23s forwards;}
+.fadein-2  { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 0.39s forwards;}
+.fadein-3  { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 0.53s forwards;}
+.fadein-4  { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 0.68s forwards;}
+.fadein-5  { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 0.85s forwards;}
+.fadein-6  { opacity: 0; animation: fadein 1.1s cubic-bezier(.29,0,.37,1) 1.0s forwards;}

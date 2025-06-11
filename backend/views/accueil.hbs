@@ -5,312 +5,48 @@
   <title>Accueil</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f8fafd;
-      --card: #fff;
-      --text: #181818;
-      --subtext: #62687c;
-      --accent: #222b45;
-      --accent-hover: #36407a;
-      --notif-bg: #fff;
-      --notif-shadow: 0 8px 32px rgba(50, 63, 101, 0.13);
-      --border: #ececec;
-      --border-dark: #dedede;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      padding: 1.7rem 4vw 1.2rem 4vw;
-      border-radius: 0 0 24px 24px;
-      margin-bottom: 2.5rem;
-      position: relative;
-      z-index: 5;
-      gap: 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .navbar .left {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .navbar h1 {
-      font-size: 2.1rem;
-      margin: 0;
-      font-weight: 700;
-      letter-spacing: -1px;
-      color: var(--accent);
-    }
-
-    .navbar p {
-      margin: 0;
-      color: var(--subtext);
-      font-size: 1rem;
-      font-weight: 400;
-    }
-
-    .navbar .actions {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-    }
-
-    .notif-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .notif-container button {
-      background: transparent;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-size: 1.25rem;
-      border-radius: 50%;
-      padding: 0.5rem 0.7rem;
-      cursor: pointer;
-      transition: background 0.2s, border 0.2s, color 0.2s;
-      outline: none;
-    }
-
-    .notif-container button:hover {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent-hover);
-    }
-
-    .notif-dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 2.7rem;
-      background: var(--notif-bg);
-      border: 1px solid var(--border-dark);
-      width: 260px;
-      max-height: 320px;
-      overflow-y: auto;
-      box-shadow: var(--notif-shadow);
-      border-radius: 16px;
-      z-index: 10;
-      animation: fadeIn 0.2s;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-
-    .notif-dropdown.active { display: block; }
-
-    .notif-item {
-      padding: 0.7rem 1rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 1rem;
-      color: var(--text);
-      background: var(--notif-bg);
-    }
-
-    .notif-item:last-child { border-bottom: none; }
-
-    .navbar button, .navbar form button {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 0.58rem 1.3rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin: 0;
-      transition: background 0.17s, color 0.17s;
-      box-shadow: 0 2px 10px rgba(62, 81, 209, 0.07);
-    }
-
-    .navbar button:hover, .navbar form button:hover {
-      background: var(--accent-hover);
-      color: #fff;
-    }
-
-    .navbar form {
-      display: inline;
-      margin: 0;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      color: var(--accent);
-      margin-bottom: 1.2rem;
-      margin-top: 0;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 2rem;
-      margin-top: 1.2rem;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      box-shadow: 0 2px 16px rgba(65, 84, 242, 0.07);
-      border: 1px solid var(--border-dark);
-      padding: 1.4rem 1.2rem 1.1rem 1.2rem;
-      transition: transform 0.17s, box-shadow 0.17s;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      min-height: 210px;
-      position: relative;
-    }
-
-    .card:hover {
-      transform: translateY(-2px) scale(1.015);
-      box-shadow: 0 4px 22px rgba(65, 84, 242, 0.13);
-      border-color: var(--accent-hover);
-    }
-
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 0.9rem;
-      object-fit: cover;
-      max-height: 125px;
-      background: #ececec;
-    }
-
-    .card h3 {
-      margin: 0.5rem 0 0.3rem 0;
-      font-size: 1.18rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .card p {
-      color: var(--subtext);
-      font-size: 1.02rem;
-      margin: 0.2rem 0 0 0;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-      transition: color 0.13s;
-    }
-
-    a:hover .card h3 {
-      color: var(--accent-hover);
-      text-decoration: underline;
-    }
-
-    p {
-      font-size: 1.07rem;
-    }
-  </style>
+  <link rel="stylesheet" href="/accueil.css">
 </head>
 <body>
-
   <div class="navbar">
     <div class="left">
       <h1>Bienvenue, {{ user.name }} ! 👋</h1>
       <p>Tu es connecté avec l’email : {{ user.email }}</p>
     </div>
-
     <div class="actions">
-      <div class="notif-container">
-        <button type="button" onclick="toggleNotifDropdown()">🔔</button>
-        <div class="notif-dropdown" id="notifDropdown">
-          {{#if notifications.length}}
-            {{#each notifications}}
-              <div class="notif-item">{{this.message}}</div>
-            {{/each}}
-          {{else}}
-            <div class="notif-item">Aucune notification</div>
-          {{/if}}
-        </div>
-      </div>
-
-      {{#if isCreator}}
-        <form method="GET" action="/creer-projet" style="display:inline;">
-          <button type="submit">Créer un projet 🚀</button>
-        </form>
-      {{/if}}
-
-      <form method="POST" action="/auth/logout" style="display:inline;">
+      <form method="GET" action="/creer-projet">
+        <button type="submit">Créer un projet 🚀</button>
+      </form>
+      <form method="POST" action="/auth/logout">
         <button type="submit">Se déconnecter</button>
       </form>
-
-      <!-- BOUTON MESSAGERIE INTELLIGENT -->
-      {{#if selectedConversationId}}
-        <a href="/messages/conversation/{{selectedConversationId}}" style="text-decoration: none;">
-          <button type="button">💬 Messagerie</button>
-        </a>
-      {{else if conversations.length}}
-        <a href="/messages/conversation/{{conversations.[0].id}}" style="text-decoration: none;">
-          <button type="button">💬 Messagerie</button>
-        </a>
-      {{else}}
-        <a href="/messages" style="text-decoration: none;">
-          <button type="button">💬 Messagerie</button>
-        </a>
-      {{/if}}
-
+      <form method="GET" action="/mes-favoris">
+        <button type="submit">Favoris</button>
+      </form>
+      <a href="/messages">
+        <button type="button">💬 Messagerie</button>
+      </a>
+      <a href="/profil">
+        <button type="button">👤 Mon Profil</button>
+      </a>
     </div>
-    <a href="/profil" style="text-decoration: none;">
-    <button type="button">👤 Mon Profil</button>
-  </a>
   </div>
 
   {{#if projects.length}}
-    <h2>📂 Tous les projets</h2>
     <div class="projects-grid">
       {{#each projects}}
         <a href="/projets/{{this.id}}">
           <div class="card">
-            {{#if this.imageurl}}
-              <img src="{{this.imageurl}}" alt="Pitch image" />
-            {{/if}}
+            <img src="{{#if this.imageurl}}{{this.imageurl}}{{else}}/images/default-project.png{{/if}}" alt="Image du projet">
             <h3>{{this.file}}</h3>
-            <p>Montant demandé : {{this.amount}} €</p>
+            <p>Montant demandé : <strong>{{this.amount}} €</strong></p>
+            <div class="card-footer">Voir le projet ➡️</div>
           </div>
         </a>
       {{/each}}
     </div>
   {{else}}
-    <p>Aucun projet pour le moment.</p>
+    <p style="padding: 1rem; text-align: center;">Aucun projet pour le moment.</p>
   {{/if}}
-
-  <script>
-    // Notification Dropdown
-    function toggleNotifDropdown() {
-      const dropdown = document.getElementById('notifDropdown');
-      dropdown.classList.toggle('active');
-    }
-
-    window.addEventListener('click', function (e) {
-      const notifBtn = document.querySelector('.notif-container button');
-      const dropdown = document.getElementById('notifDropdown');
-      if (dropdown && !notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove('active');
-      }
-    });
-  </script>
-
 </body>
 </html>

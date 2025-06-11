@@ -1,44 +1,17 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Mes favoris</title>
-    <style>
-      .card {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 1rem;
-        margin: 1rem 0;
-        width: 300px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-      }
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mes favoris</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/favoris.css">
+</head>
+<body>
+  <h1>❤️ Mes projets favoris</h1>
+  <p>Connecté en tant que {{ user.email }}</p>
+  <p><a href="/accueil">⬅️ Retour à l’accueil</a></p>
 
-      .card:hover {
-        transform: scale(1.02);
-      }
-
-      .card img {
-        max-width: 100%;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-      }
-
-      .card h3 {
-        margin: 0.5rem 0;
-      }
-
-      a.card-link {
-        text-decoration: none;
-        color: inherit;
-        display: inline-block;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>❤️ Mes projets favoris</h1>
-    <p>Connecté en tant que {{ user.email }}</p>
-    <p><a href="/accueil">⬅️ Retour à l’accueil</a></p>
-
+  <div class="cards-container">
     {{#if projects.length}}
       {{#each projects}}
         <a href="/projets/{{this.id}}" class="card-link">
@@ -54,5 +27,6 @@
     {{else}}
       <p>Tu n’as encore aucun projet en favori.</p>
     {{/if}}
-  </body>
+  </div>
+</body>
 </html>

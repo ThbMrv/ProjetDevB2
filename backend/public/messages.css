@@ -1,0 +1,161 @@
+:root {
+  --accent: #222b45;
+  --accent-hover: #36407a;
+  --light-bg: #f8fafd;
+  --white: #ffffff;
+  --border: #dedede;
+  --text: #222;
+  --subtext: #888;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--light-bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.overlay {
+  background: rgba(248, 250, 253, 0.97);
+  min-height: 100vh;
+  padding: 1.2rem;
+}
+
+h1 {
+  font-size: 1.7rem;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+  text-align: center;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.conversations,
+.conversation-detail {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+li {
+  margin-bottom: 0.8rem;
+}
+
+li a {
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+li a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.message {
+  background: var(--light-bg);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin-bottom: 0.7rem;
+}
+
+.message strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--accent);
+}
+
+.message small {
+  color: var(--subtext);
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.7rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  padding: 0.7rem 1.2rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+.back-button {
+  display: inline-block;
+  margin-bottom: 1rem;
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .wrapper {
+    flex-direction: row;
+  }
+
+  .conversations {
+    flex: 1;
+    max-width: 320px;
+  }
+
+  .conversation-detail {
+    flex: 2;
+  }
+}
