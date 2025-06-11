@@ -6,6 +6,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/accueil.css">
+  <style>
+    .notif-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .notif-container button {
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 2.5rem;
+      background-color: white;
+      min-width: 250px;
+      max-width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .notif-dropdown.active {
+      display: block;
+    }
+
+    .notif-item {
+      padding: 0.5rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .notif-item p {
+      margin: 0 0 0.5rem 0;
+    }
+
+    .notif-item form {
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    .projects-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 200px;
+      text-align: center;
+    }
+
+    .card img {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+
+    .card-footer {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="navbar">
@@ -26,10 +102,10 @@
                 {{#if (eq this.offerStatus "en cours")}}
                   <div class="notif-item">
                     <p>{{this.message}}</p>
-                    <form method="POST" action="/offers/{{this.offerId}}/accept" style="display:inline;">
+                    <form method="POST" action="/offers/{{this.offerId}}/accept">
                       <button type="submit">✅ Accepter</button>
                     </form>
-                    <form method="POST" action="/offers/{{this.offerId}}/reject" style="display:inline;">
+                    <form method="POST" action="/offers/{{this.offerId}}/reject">
                       <button type="submit">❌ Refuser</button>
                     </form>
                   </div>
