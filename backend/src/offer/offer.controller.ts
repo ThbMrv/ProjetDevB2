@@ -1,33 +1,36 @@
-import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
-import { OfferService } from './offer.service';
+import { Controller, Post, Param, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Offer } from './offer.entity';
+import { PitchDeck } from '../pitch-deck/pitch-deck.entity';
 
 @Controller('offers')
 export class OfferController {
-  constructor(private readonly service: OfferService) {}
+  constructor(
+    @InjectRepository(Offer)
+    private readonly offerRepo: Repository<Offer>,
+    @InjectRepository(PitchDeck)
+    private readonly pitchRepo: Repository<PitchDeck>,
+  ) {}
 
-  @Get()
-  getAll(): Promise<Offer[]> {
-    return this.service.findAll();
+  @Post(':id/accept')
+  async accept(@Param('id') id: number) {
+    const offer = await this.offerRepo.findOne({
+      where: { id },
+      relations: ['pitchDeck'],
+    });
+
+    if (!offer) throw new NotFoundException('Offre introuvable');
+
+    offer.pitchDeck.status = 'terminé'; // ou "accepted" si tu préfères
+    await this.pitchRepo.save(offer.pitchDeck);
+
+    return { message: 'Offre acceptée ✅' };
   }
 
-  @Get(':id')
-  getOne(@Param('id') id: number): Promise<Offer | null> {
-    return this.service.findOne(id);
-  }
-
-  @Post()
-  create(@Body() data: Partial<Offer>): Promise<Offer> {
-    return this.service.create(data);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Offer>) {
-    return this.service.update(id, data);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.service.remove(id);
+  @Post(':id/reject')
+  async reject(@Param('id') id: number) {
+    // Ici tu peux juste retourner un message, ou supprimer l’offre, ou ne rien faire
+    return { message: 'Offre refusée ❌' };
   }
 }

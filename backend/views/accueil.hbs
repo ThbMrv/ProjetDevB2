@@ -13,7 +13,35 @@
       <h1>Bienvenue, {{ user.name }} ! 👋</h1>
       <p>Tu es connecté avec l’email : {{ user.email }}</p>
     </div>
+
     <div class="actions">
+
+      <!-- NOTIFS -->
+      <div class="notif-container">
+        <button type="button" onclick="toggleNotifDropdown()">🔔</button>
+        <div class="notif-dropdown" id="notifDropdown">
+          {{#if notifications.length}}
+            {{#each notifications}}
+              {{#if (eq this.type "offer")}}
+                {{#if (eq this.offerStatus "en cours")}}
+                  <div class="notif-item">
+                    <p>{{this.message}}</p>
+                    <form method="POST" action="/offers/{{this.offerId}}/accept" style="display:inline;">
+                      <button type="submit">✅ Accepter</button>
+                    </form>
+                    <form method="POST" action="/offers/{{this.offerId}}/reject" style="display:inline;">
+                      <button type="submit">❌ Refuser</button>
+                    </form>
+                  </div>
+                {{/if}}
+              {{/if}}
+            {{/each}}
+          {{else}}
+            <div class="notif-item">Aucune notification</div>
+          {{/if}}
+        </div>
+      </div>
+
       <form method="GET" action="/creer-projet">
         <button type="submit">Créer un projet 🚀</button>
       </form>
@@ -48,5 +76,20 @@
   {{else}}
     <p style="padding: 1rem; text-align: center;">Aucun projet pour le moment.</p>
   {{/if}}
+
+  <script>
+    function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.classList.toggle('active');
+    }
+
+    window.addEventListener('click', function (e) {
+      const notifBtn = document.querySelector('.notif-container button');
+      const dropdown = document.getElementById('notifDropdown');
+      if (dropdown && !notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+  </script>
 </body>
 </html>

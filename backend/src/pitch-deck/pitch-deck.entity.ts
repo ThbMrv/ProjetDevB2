@@ -9,6 +9,7 @@ import { User } from '../user/user.entity';
 import { Comment } from '../comment/comment.entity';
 import { Message } from '../message/message.entity';
 import { Favorite } from '../favorite/favorite.entity';
+import { Offer } from '../offer/offer.entity';
 
 @Entity()
 export class PitchDeck {
@@ -37,13 +38,16 @@ export class PitchDeck {
   favorites: Favorite[];
 
   @Column({ type: 'text', nullable: true })
-description: string;
+  description: string;
 
-@Column({ default: 'en cours' })
-status: string;
+  @Column({ default: 'en cours' })
+  status: string;
 
-@Column({ nullable: true })
-pdfUrl: string;
+  @Column({ nullable: true })
+  pdfUrl: string;
+
+  @ManyToOne(() => Offer, { nullable: true })
+  acceptedOffer: Offer;
 
 
 }

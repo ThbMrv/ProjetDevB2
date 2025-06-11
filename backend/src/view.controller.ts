@@ -59,10 +59,32 @@ export class ViewController {
       isFavorite: favoriteIds.includes(p.id),
     }));
 
-    const notifications = await this.notifRepo.find({
+    const rawNotifs = await this.notifRepo.find({
       where: { user: { id: user.id } },
       order: { id: 'DESC' },
       take: 5,
+    });
+
+    await this.notifRepo.delete({ user: { id: user.id } });
+
+    const offers = await this.offerRepo.find({
+      relations: ['user', 'pitchDeck'],
+    });
+
+    const notifications = rawNotifs.map((notif) => {
+      const related = offers.find(
+        (o) =>
+          notif.message.includes(o.user.name) &&
+          notif.message.includes(`${o.amount}`) &&
+          notif.message.includes(o.pitchDeck.file)
+      );
+
+      return {
+        ...notif,
+        type: related ? 'offer' : 'other',
+        offerId: related?.id,
+        offerStatus: related?.pitchDeck.status ?? 'en cours',
+      };
     });
 
     const conversations = await this.messageRepo
@@ -83,6 +105,7 @@ export class ViewController {
 
     return {
       user: {
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -99,11 +122,6 @@ export class ViewController {
       selectedConversationUser: null,
     };
   }
-
-  // ❌ Cette route est supprimée pour ne pas bloquer MessageController
-  // @Get('/messages/conversation/:recipientId')
-  // @Render('accueil')
-  // async getConversation(...) { ... }
 
   @Get('/creer-projet')
   @Render('creer-projet')
@@ -233,23 +251,21 @@ export class ViewController {
     return { success: true };
   }
 
-
   @Get('/profil')
-@Render('profil')
-async getProfilView(@Req() req: Request) {
-  const user = req.session?.user;
-  if (!user) return { accessDenied: true };
+  @Render('profil')
+  async getProfilView(@Req() req: Request) {
+    const user = req.session?.user;
+    if (!user) return { accessDenied: true };
 
-  return {
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
-  };
-}
-
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  }
 
   @Get('/mes-favoris')
   @Render('favoris')
