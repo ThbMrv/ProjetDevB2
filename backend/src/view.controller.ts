@@ -58,6 +58,7 @@ export class ViewController {
     const projects = allProjects.map(p => ({
       ...p,
       isFavorite: favoriteIds.includes(p.id),
+      imageurl: p.imageUrl,
     }));
 
     const rawNotifs = await this.notifRepo.find({

@@ -97,7 +97,7 @@ body {
   box-shadow: 0 4px 20px rgba(65, 84, 242, 0.08);
   transition: all 0.2s;
   width: 100%;
-  max-width: 100%;
+  max-width: 420px; /* élargi */
 }
 
 .card:hover {
@@ -117,19 +117,19 @@ body {
 
 .card h3 {
   margin: 0.3rem 0 0.2rem;
-  font-size: 1.15rem;
+  font-size: 1.25rem; /* agrandi */
   color: var(--accent);
 }
 
 .card p {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.05rem; /* agrandi */
   color: var(--subtext);
 }
 
 .card-footer {
   margin-top: 0.8rem;
-  font-size: 0.88rem;
+  font-size: 0.95rem; /* agrandi */
   color: var(--accent);
   font-weight: 600;
 }
@@ -144,9 +144,9 @@ a:hover .card h3 {
   text-decoration: underline;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 768px) {
   .projects-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); /* plus large */
   }
 
   .navbar {
