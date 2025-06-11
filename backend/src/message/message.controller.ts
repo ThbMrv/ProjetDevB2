@@ -25,7 +25,8 @@ export class MessageController {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  @Get()
+  // ❌ renommée pour éviter conflit
+  @Get('all')
   getAll(): Promise<Message[]> {
     return this.service.findAll();
   }
@@ -61,7 +62,6 @@ export class MessageController {
 
     const sender = await this.userRepo.findOneByOrFail({ id: user.id });
 
-    // Vérifie que recipientId est bien un nombre
     const recipientId = parseInt(body.recipientId as any, 10);
     if (isNaN(recipientId)) {
       return res.status(400).send('Identifiant destinataire invalide');
@@ -84,6 +84,28 @@ export class MessageController {
     }
   }
 
+  // ✅ maintenant cette route est bien unique
+  @Get()
+  async redirectToFirstConversation(@Req() req: Request, @Res() res: Response) {
+    const user = req.session?.user;
+    if (!user) return res.status(401).send('Non connecté');
+
+    const conversations = await this.service.getConversationUsers(user.id);
+
+    if (conversations.length > 0) {
+      return res.redirect(`/messages/conversation/${conversations[0].id}`);
+    } else {
+      return res.render('messages', {
+        user,
+        projects: [],
+        messages: [],
+        conversations: [],
+        selectedConversationId: null,
+        selectedConversationUser: null,
+      });
+    }
+  }
+
   @Get('conversation/:recipientId')
   async getConversation(
     @Param('recipientId') recipientId: number,
@@ -97,7 +119,7 @@ export class MessageController {
     const conversations = await this.service.getConversationUsers(user.id);
     const recipient = await this.userRepo.findOneBy({ id: recipientId });
 
-    res.render('accueil', {
+    res.render('messages', {
       user,
       projects: [],
       messages,
@@ -107,3 +129,4 @@ export class MessageController {
     });
   }
 }
+
