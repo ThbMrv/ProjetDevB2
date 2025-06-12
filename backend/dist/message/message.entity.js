@@ -39,6 +39,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.ManyToOne)(() => pitch_deck_entity_1.PitchDeck, (pitchDeck) => pitchDeck.messages, {
         nullable: true,
+        onDelete: 'CASCADE',
     }),
     __metadata("design:type", pitch_deck_entity_1.PitchDeck)
 ], Message.prototype, "pitchDeck", void 0);

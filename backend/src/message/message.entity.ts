@@ -27,6 +27,7 @@ export class Message {
 
   @ManyToOne(() => PitchDeck, (pitchDeck) => pitchDeck.messages, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   pitchDeck: PitchDeck;
 }
