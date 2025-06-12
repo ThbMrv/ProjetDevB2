@@ -14,16 +14,17 @@ import { Repository } from 'typeorm';
 import { Request, Response as ExpressResponse } from 'express';
 import { User } from './user.entity';
 
-@Controller('auth')
+@Controller()
 export class UserController {
   pitchdeckRepo: any;
+  
   constructor(
     private readonly userService: UserService,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
 
-  @Post('register')
+  @Post('auth/register')
   async register(
     @Body() body: {
       email: string;
@@ -40,7 +41,7 @@ export class UserController {
     );
   }
 
-  @Post('login')
+  @Post('auth/login')
   async login(@Body() body: { email: string; password: string }) {
     const user = await this.userService.findByEmail(body.email);
 
@@ -59,7 +60,8 @@ export class UserController {
     return { message: 'Email ou mot de passe invalide ❌' };
   }
 
-  @Post('profil/password')
+  // ✅ Modification du mot de passe
+  @Post('/profil/password')
   async updatePassword(
     @Body('currentPassword') currentPassword: string,
     @Body('newPassword') newPassword: string,
@@ -67,10 +69,14 @@ export class UserController {
     @Res() res: ExpressResponse,
   ) {
     const sessionUser = req.session?.user;
-    if (!sessionUser) return res.status(401).send('Non connecté');
+    if (!sessionUser) {
+      return res.status(401).send('Non connecté');
+    }
 
     const user = await this.userRepo.findOneBy({ id: sessionUser.id });
-    if (!user) return res.status(404).send('Utilisateur introuvable');
+    if (!user) {
+      return res.status(404).send('Utilisateur introuvable');
+    }
 
     const isValid = await bcrypt.compare(currentPassword, user.password);
     if (!isValid) {
@@ -83,34 +89,35 @@ export class UserController {
     return res.redirect('/profil');
   }
 
+  // 🛠️ Admin: suppression d’un utilisateur
   @Post('/admin/users/:id/delete')
-async deleteUser(@Param('id') id: number, @Req() req: Request) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') throw new UnauthorizedException();
-  await this.userRepo.delete(id);
-  return { success: true };
-}
+  async deleteUser(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') throw new UnauthorizedException();
+    await this.userRepo.delete(id);
+    return { success: true };
+  }
 
-@Post('/admin/projects/:id/delete')
-async deleteProject(@Param('id') id: number, @Req() req: Request) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') throw new UnauthorizedException();
-  await this.pitchdeckRepo.delete(id);
-  return { success: true };
-}
+  // 🛠️ Admin: suppression d’un projet
+  @Post('/admin/projects/:id/delete')
+  async deleteProject(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') throw new UnauthorizedException();
+    await this.pitchdeckRepo.delete(id);
+    return { success: true };
+  }
 
-@Post('/admin/projects/:id/edit')
-async editProject(
-  @Param('id') id: number,
-  @Body('file') file: string,
-  @Body('status') status: string,
-  @Req() req: Request
-) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') throw new UnauthorizedException();
-
-  await this.pitchdeckRepo.update(id, { file, status });
-  return { success: true };
-}
-
+  // 🛠️ Admin: édition d’un projet
+  @Post('/admin/projects/:id/edit')
+  async editProject(
+    @Param('id') id: number,
+    @Body('file') file: string,
+    @Body('status') status: string,
+    @Req() req: Request
+  ) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') throw new UnauthorizedException();
+    await this.pitchdeckRepo.update(id, { file, status });
+    return { success: true };
+  }
 }
