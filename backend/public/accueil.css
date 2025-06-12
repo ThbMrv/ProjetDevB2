@@ -294,3 +294,83 @@ a:hover .card h3 {
     padding: 1rem;
   }
 }
+
+:root {
+  --btn-radius: 12px;
+  --btn-font: 'Inter', sans-serif;
+
+  --btn-primary-bg: #222b45;
+  --btn-primary-hover: #36407a;
+
+  --btn-secondary-bg: #fff;
+  --btn-secondary-border: #222b45;
+  --btn-secondary-hover: #222b45;
+
+  --btn-danger-bg: #e74c3c;
+  --btn-danger-hover: #c0392b;
+
+  --btn-text-light: #fff;
+  --btn-text-dark: #222b45;
+}
+
+/* ✨ Base button style */
+button,
+.button {
+  font-family: var(--btn-font);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+/* ✅ Primary */
+.button-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-text-light);
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.button-primary:hover {
+  background-color: var(--btn-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* ⚪ Secondary */
+.button-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-text-dark);
+  border: 2px solid var(--btn-secondary-border);
+}
+
+.button-secondary:hover {
+  background-color: var(--btn-secondary-hover);
+  color: var(--btn-text-light);
+}
+
+/* 🟥 Danger */
+.button-danger {
+  background-color: var(--btn-danger-bg);
+  color: var(--btn-text-light);
+  border: none;
+}
+
+.button-danger:hover {
+  background-color: var(--btn-danger-hover);
+}
+
+/* 📱 Mobile-friendly */
+@media (max-width: 767px) {
+  button,
+  .button {
+    width: 100%;
+    font-size: 1.05rem;
+    padding: 1rem;
+  }
+}
