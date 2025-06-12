@@ -40,20 +40,32 @@
   <script>
     function switchPanel() {
       document.querySelector('.split-auth-arcana').classList.toggle('signup-active');
-      window.scrollTo(0,0);
+      window.scrollTo(0, 0);
     }
+
     async function register() {
       const name = document.getElementById('registerName').value;
       const email = document.getElementById('registerEmail').value;
       const password = document.getElementById('registerPassword').value;
       const role = document.getElementById('registerRole').value;
-      const res = await fetch('http://localhost:3000/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role }),
-      });
-      const data = await res.json();
-      document.getElementById('message').innerText = "✅ Compte creer avec succès !";
+
+      const apiBaseUrl = window.location.origin;
+
+      try {
+        const res = await fetch(`${apiBaseUrl}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, role }),
+        });
+
+        if (!res.ok) throw new Error('Erreur lors de la création du compte');
+
+        const data = await res.json();
+        document.getElementById('message').innerText = "Compte créé avec succès !";
+      } catch (err) {
+        console.error(err);
+        document.getElementById('message').innerText = "Échec de l'inscription.";
+      }
     }
   </script>
 </body>
