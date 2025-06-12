@@ -27,20 +27,25 @@
     </form>
   </div>
 
-  <h2>📅 Mes rendez-vous</h2>
-
-  {{#if meetings.length}}
-    <ul>
-      {{#each meetings}}
-        <li>
-          Rendez-vous pour le projet <strong>{{this.pitchName}}</strong>
-          le {{this.date}}
-        </li>
-      {{/each}}
-    </ul>
-  {{else}}
-    <p style="padding-left: 1rem;">Aucun rendez-vous prévu.</p>
-  {{/if}}
+  <!-- 📅 Rendez-vous -->
+  <div class="meetings-section">
+    <h2>📅 Mes rendez-vous</h2>
+    {{#if meetings.length}}
+      <ul class="meeting-list">
+        {{#each meetings}}
+          <li>
+            Rendez-vous pour le projet <strong>{{this.pitchName}}</strong>
+            le {{this.date}}
+            {{#if this.status}}
+              <span class="meeting-status {{this.status}}">{{this.status}}</span>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p style="text-align: center;">Aucun rendez-vous prévu.</p>
+    {{/if}}
+  </div>
 
 </body>
 </html>
