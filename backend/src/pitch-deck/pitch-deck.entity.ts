@@ -47,12 +47,9 @@ export class PitchDeck {
   @Column({ nullable: true })
   pdfUrl: string;
 
-  // === Ajout de la relation acceptée + colonne foreign key ===
   @ManyToOne(() => Offer, { nullable: true })
   @JoinColumn({ name: 'acceptedOfferId' })
   acceptedOffer: Offer;
 
-  @Column({ nullable: true })
-  acceptedOfferId: number;
   meetings: any;
 }
