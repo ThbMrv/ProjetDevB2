@@ -40,12 +40,9 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: process.env.DB_HOST,
-                port: parseInt(process.env.DB_PORT, 10),
-                username: process.env.DB_USERNAME,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_NAME,
+                url: process.env.DB_URL,
                 synchronize: false,
+                ssl: { rejectUnauthorized: false },
                 autoLoadEntities: true,
             }),
             serve_static_1.ServeStaticModule.forRoot({
