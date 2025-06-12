@@ -13,9 +13,13 @@ const notification_entity_1 = require("./notification/notification.entity");
 require("dotenv/config");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'postgres',
-    url: process.env.DB_URL,
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || '5432'),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     synchronize: false,
-    ssl: { rejectUnauthorized: false },
+    ssl: false,
     logging: true,
     entities: [user_entity_1.User, meeting_entity_1.Meeting, pitch_deck_entity_1.PitchDeck, offer_entity_1.Offer, comment_entity_1.Comment, message_entity_1.Message, favorite_entity_1.Favorite, notification_entity_1.Notification],
     migrations: ['dist/migrations/*.js'],
