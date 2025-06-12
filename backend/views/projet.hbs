@@ -62,6 +62,12 @@
           </form>
           <p id="offer-message" style="color: #35a06d;"></p>
         </div>
+
+        <form method="POST" action="/projets/{{project.id}}/rdv">
+          <label for="date">Choisir la date :</label>
+          <input type="datetime-local" name="date" required>
+          <button type="submit">Prendre rendez-vous 📅</button>
+        </form>
       {{/if}}
     {{/if}}
   </div>

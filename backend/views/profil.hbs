@@ -27,5 +27,20 @@
     </form>
   </div>
 
+  <h2>📅 Mes rendez-vous</h2>
+
+  {{#if meetings.length}}
+    <ul>
+      {{#each meetings}}
+        <li>
+          Rendez-vous pour le projet <strong>{{this.pitchName}}</strong>
+          le {{this.date}}
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p style="padding-left: 1rem;">Aucun rendez-vous prévu.</p>
+  {{/if}}
+
 </body>
 </html>

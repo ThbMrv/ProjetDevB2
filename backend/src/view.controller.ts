@@ -8,6 +8,7 @@ import {
   Param,
   UnauthorizedException,
   Redirect,
+  NotFoundException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +19,7 @@ import { Offer } from './offer/offer.entity';
 import { User } from './user/user.entity';
 import { Notification } from './notification/notification.entity';
 import { Message } from './message/message.entity';
+import { Meeting } from './meeting/meeting.entity';
 
 @Controller()
 export class ViewController {
@@ -34,6 +36,8 @@ export class ViewController {
     private readonly messageRepo: Repository<Message>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectRepository(Meeting)
+  private readonly meetingRepo: Repository<Meeting>,
   ) {}
 
   @Get('/login')
@@ -189,6 +193,39 @@ async getAccueilView(@Req() req: Request) {
     };
   }
 
+  @Post('/projets/:id/rdv')
+  async createMeeting(
+    @Param('id') pitchId: number,
+    @Body('date') date: string,
+    @Req() req: Request
+  ) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'investor') {
+      throw new UnauthorizedException();
+    }
+
+    const pitch = await this.pitchdeckRepo.findOne({ where: { id: pitchId } });
+    if (!pitch) throw new NotFoundException("Projet introuvable");
+
+    const meeting = this.meetingRepo.create({
+      meeting_date: new Date(date),
+      user: { id: user.id } as any,
+      pitchDeck: { id: pitch.id } as any,
+    });
+
+    await this.meetingRepo.save(meeting);
+
+    const notif = this.notifRepo.create({
+      user: pitch.user,
+      message: `${user.name} a pris rendez-vous pour le projet "${pitch.file}"`,
+    });
+
+    await this.notifRepo.save(notif);
+
+    return { success: true };
+  }
+
+
   @Post('/projets/:id/offre')
   async makeOffer(
     @Param('id') projectId: number,
@@ -261,6 +298,19 @@ async getAccueilView(@Req() req: Request) {
     const user = req.session?.user;
     if (!user) return { accessDenied: true };
 
+    const meetings = await this.meetingRepo.find({
+      where: { user: { id: user.id } },
+      relations: ['pitchDeck'],
+    });
+
+    const formattedMeetings = meetings.map(m => ({
+      pitchName: m.pitchDeck.file,
+      date: m.meeting_date.toLocaleString('fr-FR', {
+        dateStyle: 'full',
+        timeStyle: 'short',
+      }),
+    }));
+
     return {
       user: {
         id: user.id,
@@ -268,34 +318,36 @@ async getAccueilView(@Req() req: Request) {
         email: user.email,
         role: user.role,
       },
+      meetings: formattedMeetings,
     };
   }
 
+
   @Get('/admin')
-@Render('admin')
-async getAdminView(@Req() req: Request) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') {
-    return { accessDenied: true };
+  @Render('admin')
+  async getAdminView(@Req() req: Request) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') {
+      return { accessDenied: true };
+    }
+
+    const users = await this.userRepo.find();
+    const projects = await this.pitchdeckRepo.find();
+
+    return {
+      user,
+      users,
+      projects,
+    };
   }
 
-  const users = await this.userRepo.find();
-  const projects = await this.pitchdeckRepo.find();
-
-  return {
-    user,
-    users,
-    projects,
-  };
-}
-
-@Post('/admin/users/:id/delete')
-@Redirect('/admin')
-async deleteUser(@Param('id') id: number, @Req() req: Request) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') throw new UnauthorizedException();
-  await this.userRepo.delete(id);
-}
+  @Post('/admin/users/:id/delete')
+  @Redirect('/admin')
+  async deleteUser(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') throw new UnauthorizedException();
+    await this.userRepo.delete(id);
+  }
 
 
   @Get('/mes-favoris')
@@ -328,26 +380,26 @@ async deleteUser(@Param('id') id: number, @Req() req: Request) {
     };
   }
 
-@Post('/admin/projects/:id/delete')
-@Redirect('/admin')
-async deleteProject(@Param('id') id: number, @Req() req: Request) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') throw new UnauthorizedException();
-  await this.pitchdeckRepo.delete(id);
-}
+  @Post('/admin/projects/:id/delete')
+  @Redirect('/admin')
+  async deleteProject(@Param('id') id: number, @Req() req: Request) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') throw new UnauthorizedException();
+    await this.pitchdeckRepo.delete(id);
+  }
 
-@Post('/admin/projects/:id/edit')
-@Redirect('/admin')
-async editProject(
-  @Param('id') id: number,
-  @Body('file') file: string,
-  @Body('status') status: string,
-  @Req() req: Request
-) {
-  const user = req.session?.user;
-  if (!user || user.role !== 'admin') throw new UnauthorizedException();
-  await this.pitchdeckRepo.update(id, { file, status });
-}
+  @Post('/admin/projects/:id/edit')
+  @Redirect('/admin')
+  async editProject(
+    @Param('id') id: number,
+    @Body('file') file: string,
+    @Body('status') status: string,
+    @Req() req: Request
+  ) {
+    const user = req.session?.user;
+    if (!user || user.role !== 'admin') throw new UnauthorizedException();
+    await this.pitchdeckRepo.update(id, { file, status });
+  }
 
 }
 

@@ -24,6 +24,7 @@ import { Offer } from './offer/offer.entity';
 import { Notification } from './notification/notification.entity';
 import { Message } from './message/message.entity';
 import { User } from './user/user.entity';
+import { Meeting } from './meeting/meeting.entity';
 
 
 @Module({
@@ -53,9 +54,8 @@ import { User } from './user/user.entity';
     MessageModule,
     NotificationModule,
     OfferModule,
-    User,
 
-    TypeOrmModule.forFeature([PitchDeck, Favorite, Offer, Notification, Message, User]),
+    TypeOrmModule.forFeature([PitchDeck, Favorite, Offer, Notification, Message, User, Meeting]),
 
   ],
   controllers: [
