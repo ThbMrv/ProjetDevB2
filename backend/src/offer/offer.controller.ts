@@ -1,8 +1,9 @@
-import { Controller, Post, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Param, NotFoundException, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Offer } from './offer.entity';
 import { PitchDeck } from '../pitch-deck/pitch-deck.entity';
+import { Response } from 'express';
 
 @Controller('offers')
 export class OfferController {
@@ -14,7 +15,7 @@ export class OfferController {
   ) {}
 
   @Post(':id/accept')
-  async accept(@Param('id') id: number) {
+  async accept(@Param('id') id: number, @Res() res: Response) {
     const offer = await this.offerRepo.findOne({
       where: { id },
       relations: ['pitchDeck'],
@@ -22,15 +23,15 @@ export class OfferController {
 
     if (!offer) throw new NotFoundException('Offre introuvable');
 
-    offer.pitchDeck.status = 'terminé'; // ou "accepted" si tu préfères
+    offer.pitchDeck.status = 'terminé'; // ou 'accepted' si c'est ta convention
     await this.pitchRepo.save(offer.pitchDeck);
 
-    return { message: 'Offre acceptée ✅' };
+    return res.redirect('/accueil');
   }
 
   @Post(':id/reject')
-  async reject(@Param('id') id: number) {
-    // Ici tu peux juste retourner un message, ou supprimer l’offre, ou ne rien faire
-    return { message: 'Offre refusée ❌' };
+  async reject(@Param('id') id: number, @Res() res: Response) {
+    // Tu peux faire un traitement ici si besoin
+    return res.redirect('/accueil');
   }
 }

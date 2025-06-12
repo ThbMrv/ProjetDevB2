@@ -7,10 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalAuthGuard = void 0;
-// src/auth/local-auth.guard.ts
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 let LocalAuthGuard = class LocalAuthGuard extends (0, passport_1.AuthGuard)('local') {
+    handleRequest(err, user, info, context) {
+        const res = context.switchToHttp().getResponse();
+        if (err || !user) {
+            return res.redirect('/login?error=1');
+        }
+        return user;
+    }
 };
 exports.LocalAuthGuard = LocalAuthGuard;
 exports.LocalAuthGuard = LocalAuthGuard = __decorate([

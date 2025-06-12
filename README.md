@@ -1,102 +1,137 @@
-# 💼 ProjetDevB2 — Application Investisseur / Créateur de pitch decks
+# 💼 ProjetDevB2 — Plateforme Investisseurs & Créateurs de pitch decks
 
-## ⚙️ Prérequis
-
-- Node.js (v18+ recommandé)  
-- PostgreSQL (avec une base nommée `investnet`)  
-- `npm` (ou `pnpm`, ou `yarn`)  
-- Un fichier `.env` bien configuré (voir ci-dessous)
-npm install @nestjs/swagger swagger-ui-express
+ProjetDevB2 est une API web backend conçue pour connecter des **créateurs de projets** et des **investisseurs** à travers des offres (pitchs), un système de messagerie, et une authentification sécurisée.  
+Le projet est développé en **NestJS** avec **PostgreSQL** comme base de données, et via une **API REST**.
 
 ---
 
-## 📦 Installation
+## 🔧 Fonctionnalités
+
+- Authentification
+- Création, lecture, mise à jour, suppression d’offres
+- Système de messagerie entre utilisateurs
+- Réserver un rendez-vous
+- Faire une offre sur un projet / Accepter OU Refuser l'offre
+- Mettre des favoris
+- Notifications
+
+---
+
+## ⚙️ Technologies utilisées
+
+- **NestJS** (framework Node.js backend)
+- **TypeScript**
+- **TypeORM** (ORM + migration SQL)
+- **PostgreSQL**
+- **JWT & bcrypt** (authentification sécurisée)
+- **Swagger** (documentation API)
+- **Postman** (test manuel de l’API)
+
+---
+
+## 📁 Structure simplifié du projet
+
+```
+ProjetDevB2/
+└── backend/
+├── src/
+│ ├── auth/ # Authentification (login, register, JWT)
+│ ├── user/ # Gestion des utilisateurs
+│ ├── offer/ # Gestion des offres
+│ ├── message/ # Messagerie entre utilisateurs
+│ ├── favorite/ # Système de favoris
+│ ├── notification/ # Notifications (optionnelles)
+│ ├── migrations/ # Migrations de la base (TypeORM)
+│ └── main.ts, app.module.ts, etc. # Fichiers principaux NestJS
+├── views/ # Templates Handlebars (.hbs)
+├── .env # Fichier d’environnement
+├── package.json # Dépendances backend
+└── README.md # Documentation du projet
+```
+
+---
+
+## 🧪 Configuration `.env`
+
+Crée un fichier `.env` à la racine de `/backend` :
+
+````env
+Lien relié à Supabase et Render pour héberger le projet
+---
+
+## 📦 Installation & lancement
 
 ```bash
-# 1. Cloner le repo
-git clone <url-du-projet>
+# Cloner le projet
+
+git clone https://github.com/ThbMrv/ProjetDevB2.git
+
 cd ProjetDevB2/backend
 
-# 2. Installer les dépendances
+# Installer les dépendances
 npm install
-```
 
----
-
-## 🧪 Fichier `.env` (à placer dans `/backend/.env`)
-
-```
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=<votre_mot_de_passe_postgres>
-DB_NAME=investnet
-```
-
----
-
-## 🛠️ Compilation (TypeScript)
-
-```bash
-# Compiler les fichiers TS → JS dans /dist
-npx tsc
-```
-
----
-
-## 🗄️ Lancer les migrations TypeORM
-
-> 💡 Assurez-vous d'avoir compilé avant d'exécuter la migration.
-
-```bash
-# 1. Compiler le projet
+# Compiler TypeScript → JavaScript
 npx tsc
 
-# 2. Appliquer les migrations pour créer les tables dans PostgreSQL
+# Appliquer les migrations (après compilation)
 npx typeorm migration:run -d dist/data-source.js
-```
 
----
-
-## 🚀 Lancer le serveur en développement
-
-```bash
+# Lancer le serveur en dev
 npm run start:dev
-```
+````
 
 ---
 
-## 🌍 Accès à l'application
+## 🚀 Accès API
 
-- Interface d'inscription / connexion :  
-  [http://localhost:3000/login](http://localhost:3000/login)
-
----
-
-## 🧹 Commandes utiles
-
-```bash
-# Recompiler après un changement
-npx tsc
-
-# Supprimer les fichiers JS compilés
-rm -rf dist
-
-# Générer une migration manuelle
-npx typeorm migration:create src/migrations/NomDeLaMigration
-
-# Générer automatiquement une migration selon les entités
-npx typeorm migration:generate src/migrations/AutoNom -d dist/data-source.js
-
-# Appliquer les migrations (toujours après compilation)
-npx typeorm migration:run -d dist/data-source.js
-```
+- Swagger : [http://localhost:3000/api](http://localhost:3000/api)
+- Exemple de routes :
+  - `POST /auth/login`
+  - `POST /auth/register`
+  - `GET /offers`
+  - `POST /message`
 
 ---
 
-## ✅ Bon à savoir
+## 🧪 Tests manuels
 
-- Le fichier `.env` doit être **bien rempli**, sinon la connexion à la BDD échoue.  
-- Les **migrations** créent uniquement les **structures**, pas les données.  
-- Le mot de passe dans `.env` doit être une **chaîne valide** (pas vide, pas de caractères spéciaux non échappés).
-- Le fichier `data-source.ts` est **compilé** en `dist/data-source.js` — assure-toi qu'il est bien généré.
+Toutes les routes ont été **testées via Postman**.  
+Chaque fonctionnalité (authentification, CRUD, messagerie) a été validée manuellement avec :
+
+- Envoi de requêtes POST/GET
+- Vérification des statuts HTTP
+- Vérification des données insérées/modifiées
+- Sécurité des tokens JWT
+
+---
+
+## ⚠️ Limitations actuelles
+
+- Pas de tests automatisés (unitaires ou e2e)
+- Pas de ESLint ou Prettier configurés
+- Pas de CI/CD ni Dockerfile pour le moment
+
+---
+
+## 🏗️ Améliorations possibles (bonus)
+
+| Feature                             | Statut |
+| ----------------------------------- | ------ |
+| Interface front (React)             | ❌     |
+| Dockerisation                       | ❌     |
+| CI/CD (GitHub Actions)              | ❌     |
+| Tests automatisés (Jest, Supertest) | ❌     |
+
+---
+
+## 👤 Auteur
+
+ThbMrv
+PatNwk
+
+---
+
+## ✅ Statut
+
+🟢 Projet fonctionnel — testé manuellement via Postman.

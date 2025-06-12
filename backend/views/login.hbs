@@ -10,20 +10,31 @@
 </head>
 <body>
   <div class="split-auth-arcana">
+    <!-- LOGIN PANEL -->
     <section class="panel panel-login">
       <div class="brand">
         <span class="brand-name">Linkora</span>
       </div>
       <h2>Sign in</h2>
+
+      {{#if error}}
+        <div class="alert alert-danger text-center">Identifiant ou mot de passe incorrect ❌</div>
+      {{/if}}
+
       <form method="POST" action="/auth/login">
-        <input name="email" placeholder="Email" class="form-control"/>
-        <input type="password" name="password" placeholder="Password" class="form-control"/>
+        <input name="email" placeholder="Email" class="form-control mb-2" />
+        <input type="password" name="password" placeholder="Password" class="form-control mb-3" />
         <button type="submit" class="btn main-btn">Sign in</button>
       </form>
-      <div class="switch-link">
-        <span>Connect ambitious founders and visionary investors to build tomorrow’s success stories, together.</span>
+
+      <div class="switch-link mt-3">
+        <span>
+          Connect ambitious founders and visionary investors to build tomorrow’s success stories, together.
+        </span>
       </div>
     </section>
+
+    <!-- SIGNUP PANEL -->
     <section class="panel panel-signup">
       <h2>Sign up</h2>
       <input id="registerName" placeholder="Name" class="form-control"><br>
@@ -37,6 +48,7 @@
       <p id="message"></p>
     </section>
   </div>
+
   <script>
     function switchPanel() {
       document.querySelector('.split-auth-arcana').classList.toggle('signup-active');

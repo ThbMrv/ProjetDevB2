@@ -91,12 +91,14 @@
   <h2>Utilisateurs</h2>
   <ul>
     {{#each users}}
-      <li>
-        <span>{{this.name}} ({{this.email}})</span>
-        <form method="POST" action="/admin/users/{{this.id}}/delete">
-          <button type="submit">🗑 Supprimer</button>
-        </form>
-      </li>
+      {{#unless (eq this.role "admin")}}
+        <li>
+          <span>{{this.name}} ({{this.email}})</span>
+          <form method="POST" action="/admin/users/{{this.id}}/delete">
+            <button type="submit">🗑 Supprimer</button>
+          </form>
+        </li>
+      {{/unless}}
     {{/each}}
   </ul>
 
