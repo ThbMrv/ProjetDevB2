@@ -176,8 +176,9 @@ a {
 }
 
 .status-badge.accepté { background-color: #2ecc71; color: white; }
-.status-badge.refusé, .status-badge.terminé { background-color: #e74c3c; color: rgb(0, 0, 0); }
+.status-badge.refusé { background-color:  #cb2727; color: white; }
 .status-badge.en-cours { background-color: #f1c40f; color: white; }
+.status-badge.terminé { background-color: #3498db; color: white; }
 
 .notif-container {
   position: relative;

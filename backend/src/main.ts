@@ -11,7 +11,6 @@ async function bootstrap() {
 
   app.enableCors();
 
-  // 🔐 Sessions utilisateur
   app.use(
     session({
       secret: 'INVESTNET_SECRET_KEY',
@@ -24,8 +23,8 @@ async function bootstrap() {
     }),
   );
 
-  // 📁 Dossiers statiques
-  app.useStaticAssets(join(__dirname, '..', 'public')); // ex: /public/uploads/image.jpg
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 

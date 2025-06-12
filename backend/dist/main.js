@@ -12,7 +12,6 @@ const hbs_1 = __importDefault(require("hbs"));
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
-    // 🔐 Sessions utilisateur
     app.use((0, express_session_1.default)({
         secret: 'INVESTNET_SECRET_KEY',
         resave: false,
@@ -22,8 +21,7 @@ async function bootstrap() {
             secure: false,
         },
     }));
-    // 📁 Dossiers statiques
-    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public')); // ex: /public/uploads/image.jpg
+    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public'));
     app.setBaseViewsDir((0, path_1.join)(__dirname, '..', 'views'));
     app.setViewEngine('hbs');
     hbs_1.default.registerHelper('eq', (a, b) => a === b);

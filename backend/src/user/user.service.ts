@@ -43,7 +43,5 @@ export class UserService {
     const isMatch = await bcrypt.compare(password, user.password);
     return isMatch ? user : null;
   }
-
-  // Removed duplicate implementation of findByEmail
   
 }
