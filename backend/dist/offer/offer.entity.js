@@ -25,7 +25,9 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], Offer.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => pitch_deck_entity_1.PitchDeck, (pitch) => pitch.id),
+    (0, typeorm_1.ManyToOne)(() => pitch_deck_entity_1.PitchDeck, (pitch) => pitch.id, {
+        onDelete: 'CASCADE',
+    }),
     __metadata("design:type", pitch_deck_entity_1.PitchDeck)
 ], Offer.prototype, "pitchDeck", void 0);
 __decorate([

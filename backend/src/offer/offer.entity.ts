@@ -15,7 +15,9 @@ export class Offer {
   @ManyToOne(() => User, (user) => user.id)
   user: User;
 
-  @ManyToOne(() => PitchDeck, (pitch) => pitch.id)
+  @ManyToOne(() => PitchDeck, (pitch) => pitch.id, {
+    onDelete: 'CASCADE',
+  })
   pitchDeck: PitchDeck;
 
   @Column('float')
