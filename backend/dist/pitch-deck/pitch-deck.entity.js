@@ -64,6 +64,10 @@ __decorate([
     __metadata("design:type", String)
 ], PitchDeck.prototype, "pdfUrl", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Number)
+], PitchDeck.prototype, "acceptedOfferId", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => offer_entity_1.Offer, { nullable: true }),
     (0, typeorm_1.JoinColumn)({ name: 'acceptedOfferId' }),
     __metadata("design:type", offer_entity_1.Offer)

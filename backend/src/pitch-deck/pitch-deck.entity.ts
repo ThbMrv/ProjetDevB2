@@ -47,6 +47,9 @@ export class PitchDeck {
   @Column({ nullable: true })
   pdfUrl: string;
 
+  @Column({ nullable: true })
+  acceptedOfferId: number;
+
   @ManyToOne(() => Offer, { nullable: true })
   @JoinColumn({ name: 'acceptedOfferId' })
   acceptedOffer: Offer;
