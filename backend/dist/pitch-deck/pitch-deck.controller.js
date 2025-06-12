@@ -23,14 +23,14 @@ let PitchDeckController = class PitchDeckController {
     constructor(dataSource) {
         this.dataSource = dataSource;
     }
-    async getProjet(id, req) {
+    async getProjet(id, rdv, req) {
         const user = req.session?.user;
         if (!user)
             return { accessDenied: true };
         const [project] = await this.dataSource.query(`SELECT p.*, u.name AS "ownerName", u.id AS "ownerId"
-       FROM pitch_deck p
-       JOIN "user" u ON u.id = p."userId"
-       WHERE p.id = $1`, [id]);
+      FROM pitch_deck p
+      JOIN "user" u ON u.id = p."userId"
+      WHERE p.id = $1`, [id]);
         if (!project)
             return { notFound: true };
         const isOwner = project.userId === user.id;
@@ -38,6 +38,7 @@ let PitchDeckController = class PitchDeckController {
             project,
             user,
             isOwner,
+            rdv: rdv === 'ok',
         };
     }
     async getEditForm(id, req) {
@@ -112,9 +113,10 @@ __decorate([
     (0, common_1.Get)('/:id'),
     (0, common_1.Render)('projet'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('rdv')),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, String, Object]),
     __metadata("design:returntype", Promise)
 ], PitchDeckController.prototype, "getProjet", null);
 __decorate([

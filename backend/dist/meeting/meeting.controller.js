@@ -34,6 +34,21 @@ let MeetingController = class MeetingController {
     remove(id) {
         return this.service.remove(id);
     }
+    // ✅ Gère le bouton "Prendre RDV" côté front JS
+    async prendreRDV(id, req, res) {
+        const user = req.session?.user;
+        if (!user)
+            return res.status(401).json({ success: false, message: 'Non authentifié' });
+        const { meeting_date } = req.body;
+        if (!meeting_date)
+            return res.status(400).json({ success: false, message: 'Date manquante' });
+        await this.service.create({
+            meeting_date: new Date(meeting_date),
+            user: { id: user.id },
+            pitchDeck: { id },
+        });
+        return res.status(200).json({ success: true });
+    }
 };
 exports.MeetingController = MeetingController;
 __decorate([
@@ -71,6 +86,15 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], MeetingController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('/projets/:id/rdv'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object, Object]),
+    __metadata("design:returntype", Promise)
+], MeetingController.prototype, "prendreRDV", null);
 exports.MeetingController = MeetingController = __decorate([
     (0, common_1.Controller)('meetings'),
     __metadata("design:paramtypes", [meeting_service_1.MeetingService])

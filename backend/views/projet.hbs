@@ -55,19 +55,22 @@
     {{else}}
       {{#if (eq user.role "investor")}}
         <div class="actions">
+          <!-- Formulaire d'offre -->
           <form id="offer-form">
             <label for="amount">Faire une offre 💰 (€)</label>
             <input type="number" name="amount" id="offer-amount" required min="1" step="any" />
             <button type="submit">Proposer</button>
           </form>
           <p id="offer-message" style="color: #35a06d;"></p>
-        </div>
 
-        <form method="POST" action="/projets/{{project.id}}/rdv">
-          <label for="date">Choisir la date :</label>
-          <input type="datetime-local" name="date" required>
-          <button type="submit">Prendre rendez-vous 📅</button>
-        </form>
+          <!-- Formulaire de RDV -->
+          <form id="rdv-form">
+            <label for="rdv-date">Choisir la date :</label>
+            <input type="datetime-local" id="rdv-date" required>
+            <button type="submit">Prendre rendez-vous 📅</button>
+          </form>
+          <p id="rdv-message" style="margin-top: 0.5rem;"></p>
+        </div>
       {{/if}}
     {{/if}}
   </div>
@@ -94,6 +97,7 @@
       }
     }
 
+    // Formulaire d'offre
     const offerForm = document.getElementById('offer-form');
     if (offerForm) {
       offerForm.addEventListener('submit', async (e) => {
@@ -112,6 +116,31 @@
           msg.textContent = '✅ Offre envoyée avec succès !';
         } else {
           msg.textContent = '❌ Une erreur est survenue.';
+        }
+      });
+    }
+
+    // Formulaire RDV
+    const rdvForm = document.getElementById('rdv-form');
+    if (rdvForm) {
+      rdvForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const meeting_date = document.getElementById('rdv-date').value;
+        const pitchdeckId = {{project.id}};
+
+        const res = await fetch(`/meetings/projets/${pitchdeckId}/rdv`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ meeting_date }),
+        });
+
+        const msg = document.getElementById('rdv-message');
+        if (res.ok) {
+          msg.textContent = '✅ Rendez-vous pris avec succès !';
+          msg.style.color = 'green';
+        } else {
+          msg.textContent = '❌ Une erreur est survenue.';
+          msg.style.color = 'red';
         }
       });
     }

@@ -23,35 +23,37 @@ let OfferController = class OfferController {
         this.offerRepo = offerRepo;
         this.pitchRepo = pitchRepo;
     }
-    async accept(id) {
+    async accept(id, res) {
         const offer = await this.offerRepo.findOne({
             where: { id },
             relations: ['pitchDeck'],
         });
         if (!offer)
             throw new common_1.NotFoundException('Offre introuvable');
-        offer.pitchDeck.status = 'terminé'; // ou "accepted" si tu préfères
+        offer.pitchDeck.status = 'terminé'; // ou 'accepted' si c'est ta convention
         await this.pitchRepo.save(offer.pitchDeck);
-        return { message: 'Offre acceptée ✅' };
+        return res.redirect('/accueil');
     }
-    async reject(id) {
-        // Ici tu peux juste retourner un message, ou supprimer l’offre, ou ne rien faire
-        return { message: 'Offre refusée ❌' };
+    async reject(id, res) {
+        // Tu peux faire un traitement ici si besoin
+        return res.redirect('/accueil');
     }
 };
 exports.OfferController = OfferController;
 __decorate([
     (0, common_1.Post)(':id/accept'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], OfferController.prototype, "accept", null);
 __decorate([
     (0, common_1.Post)(':id/reject'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], OfferController.prototype, "reject", null);
 exports.OfferController = OfferController = __decorate([

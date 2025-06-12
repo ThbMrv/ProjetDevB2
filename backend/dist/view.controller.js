@@ -33,8 +33,8 @@ let ViewController = class ViewController {
         this.userRepo = userRepo;
         this.meetingRepo = meetingRepo;
     }
-    getLoginView() {
-        return {};
+    getLoginView(error) {
+        return { error };
     }
     async getAccueilView(req) {
         const user = req.session?.user;
@@ -306,8 +306,9 @@ exports.ViewController = ViewController;
 __decorate([
     (0, common_1.Get)('/login'),
     (0, common_1.Render)('login'),
+    __param(0, (0, common_1.Query)('error')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ViewController.prototype, "getLoginView", null);
 __decorate([

@@ -9,6 +9,7 @@ import {
   UnauthorizedException,
   Redirect,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,8 +43,8 @@ export class ViewController {
 
   @Get('/login')
   @Render('login')
-  getLoginView() {
-    return {};
+  getLoginView(@Query('error') error: string) {
+    return { error };
   }
 
   @Get('/accueil')

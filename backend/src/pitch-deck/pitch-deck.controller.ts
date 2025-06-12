@@ -9,6 +9,7 @@ import {
   Body,
   UseInterceptors,
   UploadedFiles,
+  Query,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DataSource } from 'typeorm';
@@ -23,15 +24,19 @@ export class PitchDeckController {
 
   @Get('/:id')
   @Render('projet')
-  async getProjet(@Param('id') id: number, @Req() req: Request) {
+  async getProjet(
+    @Param('id') id: number,
+    @Query('rdv') rdv: string,
+    @Req() req: Request,
+  ) {
     const user = req.session?.user;
     if (!user) return { accessDenied: true };
 
     const [project] = await this.dataSource.query(
       `SELECT p.*, u.name AS "ownerName", u.id AS "ownerId"
-       FROM pitch_deck p
-       JOIN "user" u ON u.id = p."userId"
-       WHERE p.id = $1`,
+      FROM pitch_deck p
+      JOIN "user" u ON u.id = p."userId"
+      WHERE p.id = $1`,
       [id],
     );
 
@@ -43,8 +48,10 @@ export class PitchDeckController {
       project,
       user,
       isOwner,
+      rdv: rdv === 'ok',
     };
   }
+
 
   @Get('/:id/edit')
   @Render('edit-projet')
